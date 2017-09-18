@@ -39,7 +39,7 @@ extern int encoderFlag_RotationClockwise;
 void UI_CreateEntries(void);
 void UI_Init(void);
 void UI_Update(void);
-void UI_Message(char* message);
+void UI_Message(char* message, uint32_t delay);
 void UI_Error(char* message);
 
 
