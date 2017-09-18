@@ -2,6 +2,7 @@
   ******************************************************************************
   * File Name          : main.h
   * Description        : This file contains the common defines of the application
+  * Author			   : Ale & Ema
   ******************************************************************************
   *
   * COPYRIGHT(c) 2017 STMicroelectronics
