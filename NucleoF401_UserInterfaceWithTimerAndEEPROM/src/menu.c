@@ -111,11 +111,11 @@ void Menu_OnPression(void)
 		break;
 	case ParamModify:
 	case ParamModified:
-		if(tempParam != *Menu_currentEntry->param)
+		if(tempParam != *((uint8_t*)(Menu_currentEntry->param)))
 		{
 			Menu_currentEntry->isModified = 1; //this menu entry parameter has been modified
 			menuParamIsModified = 1;		//some menu entry parameter has been modified
-			*(Menu_currentEntry->param) = tempParam; //store the new value into the variable
+			*((uint8_t*)(Menu_currentEntry->param)) = tempParam; //store the new value into the variable
 		}
 		menuState = NavigationUpdate;
 		LCD_CursorMode(Invisible_Cursor);
@@ -135,7 +135,7 @@ void Menu_ModifyParam(void)
 	if(Menu_currentEntry->param) //check if pointer is not equal to 0
 	{
 		menuState = ParamModify;
-		tempParam = *(Menu_currentEntry->param);
+		tempParam = *((uint8_t*)(Menu_currentEntry->param));
 	}
 
 }
