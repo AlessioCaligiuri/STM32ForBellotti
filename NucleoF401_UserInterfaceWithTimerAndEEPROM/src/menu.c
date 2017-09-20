@@ -109,8 +109,10 @@ void Menu_OnPression(void)
 		if(Menu_currentEntry->onPression) //if the pointer is not null
 			Menu_currentEntry->onPression();
 		break;
-	case ParamModify:
-	case ParamModified:
+	case ParamModify_0_511:
+	case ParamModified_0_511:
+	case ParamModify_0_1:
+	case ParamModified_0_1:
 		if(tempParam != *((Menu_currentEntry->param)))
 		{
 			Menu_currentEntry->isModified = 1; //this menu entry parameter has been modified
@@ -126,18 +128,33 @@ void Menu_OnPression(void)
 }
 
 /**
- * @brief	Used as "onPression" when the menu entry can modify a parameter.
+ * @brief	Used as "onPression" when the menu entry can modify a parameter
+ * 			with 0 - 511 bounds.
  * 			Set the menu mode as "Parameter Modify", then load the current
  * 			parameter value into a temporary variable.
  */
-void Menu_ModifyParam(void)
+void Menu_ModifyParam_0_511(void)
 {
 	if(Menu_currentEntry->param) //check if pointer is not equal to 0
 	{
-		menuState = ParamModify;
+		menuState = ParamModify_0_511;
 		tempParam = *((Menu_currentEntry->param));
 	}
+}
 
+/**
+ * @brief	Used as "onPression" when the menu entry can modify a parameter
+ * 			with boolean value.
+ * 			Set the menu mode as "Parameter Modify", then load the current
+ * 			parameter value into a temporary variable.
+ */
+void Menu_ModifyParam_0_1(void)
+{
+	if(Menu_currentEntry->param) //check if pointer is not equal to 0
+	{
+		menuState = ParamModify_0_1;
+		tempParam = *((Menu_currentEntry->param));
+	}
 }
 
 /**
@@ -163,22 +180,55 @@ void Menu_Show(void)
 		menuState = Navigation;
 		break;
 
-	case ParamModify: /* If the param is going to be modified */
+	case ParamModify_0_511: /* If the param is going to be modified */
 		LCD_2ndRow();
 		LCD_printf("                ");
 		LCD_2ndRow();
 		LCD_printf("Value: %d  ",tempParam);
-		LCD_Locate(2, 8);
+		//LCD_Locate(2, 8);
+		LCD_CMD(0x10); //shift cursor left
+		LCD_CMD(0x10); //shift cursor left
+		LCD_CMD(0x10); //shift cursor left
 		LCD_CursorMode(BlinkingBlock_Cursor);
 		break;
 
 	/* If the param has been modified, re-print only the parameter value */
-	case ParamModified:
+	case ParamModified_0_511:
 		LCD_Locate(2, 8);
 		LCD_printf("%d  ",tempParam);
 		LCD_CMD(0x10); //shift cursor left
 		LCD_CMD(0x10); //shift cursor left
 		LCD_CMD(0x10); //shift cursor left
+		break;
+
+	case ParamModify_0_1: /* If the param is going to be modified */
+		LCD_2ndRow();
+		LCD_printf("                ");
+		LCD_2ndRow();
+		if(tempParam) //if not zero
+		{
+			LCD_printf("Value: ON");
+		}
+		else
+		{
+			LCD_printf("Value: OFF");
+		}
+		LCD_Locate(2, 8);
+		LCD_CursorMode(BlinkingBlock_Cursor);
+		break;
+
+	/* If the param has been modified, re-print only the parameter value */
+	case ParamModified_0_1:
+		LCD_Locate(2, 8);
+		if(tempParam) //if not zero
+		{
+			LCD_printf("ON");
+		}
+		else
+		{
+			LCD_printf("OFF");
+		}
+		LCD_Locate(2, 8);
 		break;
 
 	case Navigation:
@@ -203,19 +253,43 @@ void Menu_OnRotationCW(void)
 	case Navigation:
 		Menu_GoNextEntry();
 		break;
-	case ParamModify:
-		if(tempParam < 255)
+
+	case ParamModify_0_511:
+		if(tempParam < 511)
 		{
 			tempParam++;
 		}
-		menuState = ParamModified;
+		menuState = ParamModified_0_511;
 		break;
-	case ParamModified:
-		if(tempParam < 255)
+
+	case ParamModified_0_511:
+		if(tempParam < 511)
 		{
 			tempParam++;
 		}
 		break;
+
+	case ParamModify_0_1:
+		if(tempParam) //if not zero
+		{
+		}
+		else
+		{
+			tempParam=1; //if zero, put 1
+		}
+		menuState = ParamModified_0_1;
+		break;
+
+	case ParamModified_0_1:
+		if(tempParam) //if zero
+		{
+		}
+		else
+		{
+			tempParam=1; //if zero, put 1
+		}
+		break;
+
 	default:
 		break;
 	}
@@ -236,19 +310,37 @@ void Menu_OnRotationCCW(void)
 	case Navigation:
 		Menu_GoPreviousEntry();
 		break;
-	case ParamModify:
+
+	case ParamModify_0_511:
 		if(tempParam > 0)
 		{
 			tempParam--;
 		}
-		menuState = ParamModified;
+		menuState = ParamModified_0_511;
 		break;
-	case ParamModified:
+
+	case ParamModified_0_511:
 		if(tempParam > 0)
 		{
 			tempParam--;
 		}
 		break;
+
+	case ParamModify_0_1:
+		if(tempParam) //if not zero
+		{
+			tempParam = 0;
+		}
+		menuState = ParamModified_0_1;
+		break;
+
+	case ParamModified_0_1:
+		if(tempParam) //if not zero
+		{
+			tempParam = 0;
+		}
+		break;
+
 	default:
 		break;
 	}
