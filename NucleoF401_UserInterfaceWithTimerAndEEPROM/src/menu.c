@@ -25,7 +25,7 @@
  * @brief	Used in "Modify Parameter" mode to temporary hold the value
  * 			inserted by the user.
  */
-uint8_t tempParam;
+int tempParam;
 
 /**
  * @brief True if a parameter has been modified without saving.
@@ -111,11 +111,11 @@ void Menu_OnPression(void)
 		break;
 	case ParamModify:
 	case ParamModified:
-		if(tempParam != *((uint8_t*)(Menu_currentEntry->param)))
+		if(tempParam != *((Menu_currentEntry->param)))
 		{
 			Menu_currentEntry->isModified = 1; //this menu entry parameter has been modified
 			menuParamIsModified = 1;		//some menu entry parameter has been modified
-			*((uint8_t*)(Menu_currentEntry->param)) = tempParam; //store the new value into the variable
+			*((Menu_currentEntry->param)) = tempParam; //store the new value into the variable
 		}
 		menuState = NavigationUpdate;
 		LCD_CursorMode(Invisible_Cursor);
@@ -135,7 +135,7 @@ void Menu_ModifyParam(void)
 	if(Menu_currentEntry->param) //check if pointer is not equal to 0
 	{
 		menuState = ParamModify;
-		tempParam = *((uint8_t*)(Menu_currentEntry->param));
+		tempParam = *((Menu_currentEntry->param));
 	}
 
 }

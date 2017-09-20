@@ -33,7 +33,7 @@ typedef struct MenuEntry
 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 */
 	functionPtr onPression;				/*!< Pointer to the function to be executed,
 	 	 	 	 	 	 	 	 	 	 	 	 when the encoder button is pressed. 	 */
-	void *param;						/*!< Pointer to parameter modified by this
+	int *param;							/*!< Pointer to parameter modified by this
 											 	 entry (generic).						 */
 	int isModified;						/*!< True if the pointed parameter was been
 	 	 	 	 	 	 	 	 	 	 	 	 modified.								 */
