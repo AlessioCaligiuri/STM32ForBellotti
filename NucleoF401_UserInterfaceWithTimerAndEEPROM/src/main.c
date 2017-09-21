@@ -47,7 +47,13 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+int dmx_redA;
+int dmx_greenA;
+int dmx_blueA;
+int dmx_redB;
+int dmx_greenB;
+int dmx_blueB;
+int fullOnIsActive = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

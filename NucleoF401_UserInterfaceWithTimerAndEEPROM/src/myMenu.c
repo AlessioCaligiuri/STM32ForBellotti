@@ -1,4 +1,5 @@
 #include "menu.h"
+#include "main.h"
 #include "myMenu.h"
 #include <string.h>
 
@@ -21,23 +22,37 @@
 MenuEntryStruct* MyMenu_initialEntryPtr;
 
 /* BEGIN Entries structs --------------------------------------------------- */
-MenuEntryStruct menuImpostazioni;
-	MenuEntryStruct luceRossa;
-	MenuEntryStruct luceVerde;
-	MenuEntryStruct luceBlu;
-	MenuEntryStruct indietroAImpostazioni;
 
-MenuEntryStruct menuVerifica;
-	MenuEntryStruct ricezione;
-	MenuEntryStruct trasmissione;
-	MenuEntryStruct indietroAVerifica;
+/* Level 1 entries */
+MenuEntryStruct mesL1_lightMode;
+MenuEntryStruct mesL1_dmxSettings;
+MenuEntryStruct mesL1_manualSettings;
+MenuEntryStruct mesL1_fullOn;
+MenuEntryStruct mesL1_dmxCheck;
 
-MenuEntryStruct crediti;
-	MenuEntryStruct alessio;
+/* Level 2 of DMX Settings entries */
+MenuEntryStruct mesL2_ds_redA;
+MenuEntryStruct mesL2_ds_greenA;
+MenuEntryStruct mesL2_ds_blueA;
+MenuEntryStruct mesL2_ds_redB;
+MenuEntryStruct mesL2_ds_greenB;
+MenuEntryStruct mesL2_ds_blueB;
+MenuEntryStruct mesL2_ds_thru;
+MenuEntryStruct mesL2_ds_back;
 
-uint8_t	luceR;
-uint8_t	luceV;
-uint8_t	luceB;
+/* Level 2 of Manual Settings entries */
+MenuEntryStruct mesL2_ms_redA;
+MenuEntryStruct mesL2_ms_greenA;
+MenuEntryStruct mesL2_ms_blueA;
+MenuEntryStruct mesL2_ms_redB;
+MenuEntryStruct mesL2_ms_greenB;
+MenuEntryStruct mesL2_ms_blueB;
+MenuEntryStruct mesL2_ms_back;
+
+/* Level 2 of DMX check entries */
+MenuEntryStruct mesL2_dc_serial;
+MenuEntryStruct mesL2_dc_lcd;
+
 /* END Entries structs ----------------------------------------------------- */
 
 /**
@@ -45,63 +60,43 @@ uint8_t	luceB;
  */
 void MyMenu_CreateEntries(void)
 {
+	/*************** Level 1 entries ****************/
+	/* Light mode */
+	Menu_FillEntryWithZeros(&mesL1_lightMode);
+	strcpy(mesL1_lightMode.name,	"   LIGHT MODE   ");
+	strcpy(mesL1_lightMode.surname, "press to change ");
+	mesL1_lightMode.nextEntry = &mesL1_dmxSettings;
+	mesL1_lightMode.param = &lightMode;
+	//mesL1_lightMode.onPression = Menu_GoLowerLevel;
 
-	Menu_FillEntryWithZeros(&menuImpostazioni);
-	strcpy(menuImpostazioni.name,	"      MENU");
-	strcpy(menuImpostazioni.surname,"  IMPOSTAZIONI");
-	menuImpostazioni.nextEntry = &menuVerifica;
-	menuImpostazioni.lowerLevelEntry = &luceRossa;
-	menuImpostazioni.onPression = Menu_GoLowerLevel;
+	/* DMX Settings */
+	Menu_FillEntryWithZeros(&mesL1_dmxSettings);
+	strcpy(mesL1_dmxSettings.name,	 "  DMX SETTINGS  ");
+	strcpy(mesL1_dmxSettings.surname,"                ");
+	mesL1_dmxSettings.previousEntry = &mesL1_lightMode;
+	mesL1_dmxSettings.nextEntry = &mesL1_manualSettings;
+	mesL1_dmxSettings.lowerLevelEntry = &mesL2_ds_redA;
+	mesL1_dmxSettings.onPression = Menu_GoLowerLevel;
 
-	Menu_FillEntryWithZeros(&luceRossa);
-	strcpy(luceRossa.name,	"LUCE ROSSA");
-	strcpy(luceRossa.surname,"Modifica...");
-	luceRossa.nextEntry = &luceVerde;
-	luceRossa.param = &luceR;
-	luceRossa.onPression = Menu_ModifyParam;
+	/* Manual Settings */
+	Menu_FillEntryWithZeros(&mesL1_manualSettings);
+	strcpy(mesL1_manualSettings.name,	 "MANUAL SETTINGS ");
+	strcpy(mesL1_manualSettings.surname, "                ");
+	mesL1_manualSettings.previousEntry = &mesL1_dmxSettings;
+	mesL1_manualSettings.nextEntry = &mesL1_fullOn;
+	mesL1_manualSettings.lowerLevelEntry = &mesL2_ms_redA;
+	mesL1_manualSettings.onPression = Menu_GoLowerLevel;
 
-	Menu_FillEntryWithZeros(&luceVerde);
-	strcpy(luceVerde.name,	"LUCE VERDE");
-	strcpy(luceVerde.surname,"Modifica...");
-	luceVerde.nextEntry = &luceBlu;
-	luceVerde.previousEntry = &luceRossa;
-	luceVerde.param = &luceV;
-	luceVerde.onPression = Menu_ModifyParam;
+	/* Full On */
+	Menu_FillEntryWithZeros(&mesL1_fullOn);
+	strcpy(mesL1_fullOn.name,	 "    FULL ON     ");
+	strcpy(mesL1_fullOn.surname, "press to on/off ");
+	mesL1_fullOn.previousEntry = &mesL1_manualSettings;
+	mesL1_fullOn.nextEntry = &mesL1_dmxCheck;
+	mesL1_fullOn.param = &fullOnIsActive;
+	mesL1_fullOn.onPression = Menu_ModifyParam_0_1;
 
-	Menu_FillEntryWithZeros(&luceBlu);
-	strcpy(luceBlu.name,	"LUCE BLU");
-	strcpy(luceBlu.surname,"Modifica...");
-	luceBlu.nextEntry = &indietroAImpostazioni;
-	luceBlu.previousEntry = &luceVerde;
-	luceBlu.param = &luceB;
-	luceBlu.onPression = Menu_ModifyParam;
-
-	Menu_FillEntryWithZeros(&indietroAImpostazioni);
-	strcpy(indietroAImpostazioni.name,	"Torna indietro al");
-	strcpy(indietroAImpostazioni.surname, "menu principale");
-	indietroAImpostazioni.previousEntry = &luceBlu;
-	indietroAImpostazioni.upperLevelEntry = &menuImpostazioni;
-	indietroAImpostazioni.onPression = Menu_GoUpperLevel;
-
-
-	Menu_FillEntryWithZeros(&menuVerifica);
-	strcpy(menuVerifica.name,	"      MENU");
-	strcpy(menuVerifica.surname,"    VERIFICA");
-	menuVerifica.previousEntry = &menuImpostazioni;
-	menuVerifica.lowerLevelEntry = &ricezione;
-	menuVerifica.onPression = Menu_GoLowerLevel;
-
-	Menu_FillEntryWithZeros(&ricezione);
-	strcpy(ricezione.name,	"RICEZIONE");
-	strcpy(ricezione.surname,"OK, funziona!");
-	ricezione.nextEntry = &indietroAVerifica;
-
-	Menu_FillEntryWithZeros(&indietroAVerifica);
-	strcpy(indietroAVerifica.name,	"Torna indietro al");
-	strcpy(indietroAVerifica.surname,"menu principale");
-	indietroAVerifica.previousEntry = &ricezione;
-	indietroAVerifica.upperLevelEntry = &menuVerifica;
-	indietroAVerifica.onPression = Menu_GoUpperLevel;
+	/*************** Level 2 entries ****************/
 
 	MyMenu_initialEntryPtr = &menuImpostazioni;
 }

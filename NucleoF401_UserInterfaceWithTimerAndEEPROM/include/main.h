@@ -78,6 +78,52 @@ extern int timFlag_PeriodElapsed;
 void DelayBreaked(void);
 /* USER CODE END Private defines */
 
+typedef enum {
+	DMXControlled = 0,		/*!< Used when lights are DMX controlled. 					*/
+	Manual = 1				/*!< Used when lights are driven by manual settings.	    */
+} LightMode_t;
+
+
+/**
+ * @brief	Flag to indicate full on lights mode active.
+ */
+extern int fullOnIsActive;
+
+/**
+ * @brief	DMX receiving channel for red LED of A stripe.
+ */
+extern int dmx_redA;
+
+/**
+ * @brief	DMX receiving channel for green LED of A stripe.
+ */
+extern int dmx_greenA;
+
+/**
+ * @brief	DMX receiving channel for blue LED of A stripe.
+ */
+extern int dmx_blueA;
+
+/**
+ * @brief	DMX receiving channel for red LED of B stripe.
+ */
+extern int dmx_redB;
+
+/**
+ * @brief	DMX receiving channel for green LED of B stripe.
+ */
+extern int dmx_greenB;
+
+/**
+ * @brief	DMX receiving channel for blue LED of B stripe.
+ */
+extern int dmx_blueB;
+
+/**
+ * @brief	Light mode
+ */
+extern LightMode_t lightMode;
+
 /**
   * @}
   */ 
