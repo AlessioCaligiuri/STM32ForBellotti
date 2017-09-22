@@ -47,13 +47,15 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-int dmx_redA;
-int dmx_greenA;
-int dmx_blueA;
-int dmx_redB;
-int dmx_greenB;
-int dmx_blueB;
+int dmxCh_redA;
+int dmxCh_greenA;
+int dmxCh_blueA;
+int dmxCh_redB;
+int dmxCh_greenB;
+int dmxCh_blueB;
 int fullOnIsActive = 0;
+int dmxThruModeIsActive = 1;
+LightMode_t lightMode = Manual;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

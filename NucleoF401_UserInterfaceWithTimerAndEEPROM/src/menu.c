@@ -207,7 +207,7 @@ void Menu_Show(void)
 		LCD_2ndRow();
 		if(tempParam) //if not zero
 		{
-			LCD_printf("Value: ON");
+			LCD_printf("Value: ON ");
 		}
 		else
 		{
@@ -222,7 +222,7 @@ void Menu_Show(void)
 		LCD_Locate(2, 8);
 		if(tempParam) //if not zero
 		{
-			LCD_printf("ON");
+			LCD_printf("ON ");
 		}
 		else
 		{

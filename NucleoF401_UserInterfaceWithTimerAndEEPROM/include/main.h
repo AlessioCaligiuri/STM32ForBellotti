@@ -92,37 +92,39 @@ extern int fullOnIsActive;
 /**
  * @brief	DMX receiving channel for red LED of A stripe.
  */
-extern int dmx_redA;
+extern int dmxCh_redA;
 
 /**
  * @brief	DMX receiving channel for green LED of A stripe.
  */
-extern int dmx_greenA;
+extern int dmxCh_greenA;
 
 /**
  * @brief	DMX receiving channel for blue LED of A stripe.
  */
-extern int dmx_blueA;
+extern int dmxCh_blueA;
 
 /**
  * @brief	DMX receiving channel for red LED of B stripe.
  */
-extern int dmx_redB;
+extern int dmxCh_redB;
 
 /**
  * @brief	DMX receiving channel for green LED of B stripe.
  */
-extern int dmx_greenB;
+extern int dmxCh_greenB;
 
 /**
  * @brief	DMX receiving channel for blue LED of B stripe.
  */
-extern int dmx_blueB;
+extern int dmxCh_blueB;
 
 /**
  * @brief	Light mode
  */
 extern LightMode_t lightMode;
+
+extern int dmxThruModeIsActive;
 
 /**
   * @}
