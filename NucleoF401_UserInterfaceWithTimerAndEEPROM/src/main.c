@@ -55,7 +55,7 @@ int dmxCh_greenB;
 int dmxCh_blueB;
 int fullOnIsActive = 0;
 int dmxThruModeIsActive = 1;
-LightMode_t lightMode = Manual;
+LightMode_t lightMode = LightMode_DMXControlled;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

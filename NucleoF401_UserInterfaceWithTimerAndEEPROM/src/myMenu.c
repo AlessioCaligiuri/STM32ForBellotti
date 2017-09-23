@@ -67,7 +67,7 @@ void MyMenu_CreateEntries(void)
 	strcpy(mesL1_lightMode.surname, "press to change ");
 	mesL1_lightMode.nextEntry = &mesL1_dmxSettings;
 	mesL1_lightMode.param = (int*)&lightMode;
-	//mesL1_lightMode.onPression = Menu_GoLowerLevel;
+	mesL1_lightMode.onPression = Menu_ModifyParam_LightMode;
 
 	/* DMX Settings */
 	Menu_FillEntryWithZeros(&mesL1_dmxSettings);
@@ -146,7 +146,7 @@ void MyMenu_CreateEntries(void)
 
 	/* Green B Ch. */
 	Menu_FillEntryWithZeros(&mesL2_ds_greenB);
-	strcpy(mesL2_ds_greenB.name,	"   Green A Ch.  ");
+	strcpy(mesL2_ds_greenB.name,	"   Green B Ch.  ");
 	strcpy(mesL2_ds_greenB.surname,	"press to modify ");
 	mesL2_ds_greenB.previousEntry = &mesL2_ds_redB;
 	mesL2_ds_greenB.nextEntry = &mesL2_ds_blueB;
@@ -156,7 +156,7 @@ void MyMenu_CreateEntries(void)
 
 	/* Blue B Ch. */
 	Menu_FillEntryWithZeros(&mesL2_ds_blueB);
-	strcpy(mesL2_ds_blueB.name,	  "   Blue A Ch.   ");
+	strcpy(mesL2_ds_blueB.name,	  "   Blue B Ch.   ");
 	strcpy(mesL2_ds_blueB.surname,"press to modify ");
 	mesL2_ds_blueB.previousEntry = &mesL2_ds_greenB;
 	mesL2_ds_blueB.nextEntry = &mesL2_ds_thru;

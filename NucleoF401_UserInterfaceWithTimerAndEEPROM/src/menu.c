@@ -113,6 +113,8 @@ void Menu_OnPression(void)
 	case ParamModified_0_511:
 	case ParamModify_0_1:
 	case ParamModified_0_1:
+	case ParamModify_LightMode:
+	case ParamModified_LightMode:
 		if(tempParam != *((Menu_currentEntry->param)))
 		{
 			Menu_currentEntry->isModified = 1; //this menu entry parameter has been modified
@@ -154,6 +156,21 @@ void Menu_ModifyParam_0_1(void)
 	{
 		menuState = ParamModify_0_1;
 		tempParam = *((Menu_currentEntry->param));
+	}
+}
+
+/**
+ * @brief	Used as "onPression" when the menu entry can modify the parameter
+ * 			Light mode.
+ * 			Set the menu mode as "Parameter Modify", then load the current
+ * 			parameter value into a temporary variable.
+ */
+void Menu_ModifyParam_LightMode(void)
+{
+	if(Menu_currentEntry->param) //check if pointer is not equal to 0
+	{
+		menuState = ParamModify_LightMode;
+		tempParam = *((LightMode_t*)((Menu_currentEntry->param)));
 	}
 }
 
@@ -231,6 +248,45 @@ void Menu_Show(void)
 		LCD_Locate(2, 8);
 		break;
 
+	case ParamModify_LightMode: /* If the param is going to be modified */
+		LCD_2ndRow();
+		LCD_printf("                ");
+		LCD_2ndRow();
+		switch(tempParam)
+		{
+		case LightMode_DMXControlled:
+			LCD_printf(" DMX Controlled ");
+			LCD_Locate(2, 2);
+			break;
+		case LightMode_Manual:
+			LCD_printf("     Manual     ");
+			LCD_Locate(2, 6);
+			break;
+		default:
+			break;
+		}
+
+		LCD_CursorMode(BlinkingBlock_Cursor);
+		break;
+
+	/* If the param has been modified, re-print only the parameter value */
+	case ParamModified_LightMode:
+		LCD_2ndRow();
+		switch(tempParam)
+		{
+		case LightMode_DMXControlled:
+			LCD_printf(" DMX Controlled ");
+			LCD_Locate(2, 2);
+			break;
+		case LightMode_Manual:
+			LCD_printf("     Manual     ");
+			LCD_Locate(2, 6);
+			break;
+		default:
+			break;
+		}
+		break;
+
 	case Navigation:
 		break;
 	default:
@@ -290,6 +346,19 @@ void Menu_OnRotationCW(void)
 		}
 		break;
 
+	case ParamModify_LightMode:
+	case ParamNotModified_LightMode:
+	case ParamModified_LightMode:
+		if(tempParam == LightMode_DMXControlled)
+		{
+			tempParam = LightMode_Manual;
+			menuState = ParamModified_LightMode;
+		}
+		else
+		{
+			menuState = ParamNotModified_LightMode;
+		}
+		break;
 	default:
 		break;
 	}
@@ -341,6 +410,19 @@ void Menu_OnRotationCCW(void)
 		}
 		break;
 
+	case ParamModify_LightMode:
+	case ParamNotModified_LightMode:
+	case ParamModified_LightMode:
+		if(tempParam == LightMode_Manual)
+		{
+			tempParam = LightMode_DMXControlled;
+			menuState = ParamModified_LightMode;
+		}
+		else
+		{
+			menuState = ParamNotModified_LightMode;
+		}
+		break;
 	default:
 		break;
 	}

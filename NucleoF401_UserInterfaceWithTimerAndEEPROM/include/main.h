@@ -79,8 +79,8 @@ void DelayBreaked(void);
 /* USER CODE END Private defines */
 
 typedef enum {
-	DMXControlled = 0,		/*!< Used when lights are DMX controlled. 					*/
-	Manual = 1				/*!< Used when lights are driven by manual settings.	    */
+	LightMode_DMXControlled = 0,	/*!< Used when lights are DMX controlled. 			*/
+	LightMode_Manual = 1			/*!< Used when lights are driven by manual settings.*/
 } LightMode_t;
 
 

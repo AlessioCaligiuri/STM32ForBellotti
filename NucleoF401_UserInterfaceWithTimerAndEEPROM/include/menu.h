@@ -43,16 +43,21 @@ typedef struct MenuEntry
  * @brief Enum for menu state.
  */
 typedef enum MenuState {
-	Navigation = 0,		/*!< Used when no new entry has to be shown. 					*/
-	NavigationUpdate,	/*!< Used when a new entry has to be shown. 					*/
-	ParamModify_0_511,	/*!< Used when the user want to modify a parameter (with 0 - 511
-	 	 	 	 	 			bounds) but the value hasn't been changed yet. 			*/
-	ParamModified_0_511,/*!< Used when the user has modified a parameter value (with
+	Navigation = 0,			/*!< Used when no new entry has to be shown. 				*/
+	NavigationUpdate,		/*!< Used when a new entry has to be shown. 				*/
+	ParamModify_0_511,		/*!< Used when the user want to modify a parameter (with 0
+	 	 	 	 	 			- 511 bounds) but the value hasn't been changed yet. 	*/
+	ParamModified_0_511,	/*!< Used when the user has modified a parameter value (with
 								0 - 511 bounds).										*/
-	ParamModify_0_1,	/*!< Used when the user want to modify a parameter (with boolean
+	ParamModify_0_1,		/*!< Used when the user want to modify a parameter (with boolean
 								value) but the value hasn't been changed yet. 			*/
-	ParamModified_0_1	/*!< Used when the user has modified a parameter (with boolean
+	ParamModified_0_1,		/*!< Used when the user has modified a parameter (with boolean
 								value) value.											*/
+	ParamModify_LightMode,	/*!< Used when the user want to modify the parameter "Light
+	 	 	 	 	 	 	 	 mode" but the value hasn't been changed yet. 			*/
+	ParamModified_LightMode, /*!< Used when the user has modified the parameter "Light
+								mode" value.											*/
+	ParamNotModified_LightMode
 } MenuState_t;
 
 /**
@@ -79,6 +84,7 @@ void Menu_GoPreviousEntry(void);
 void Menu_GoNextEntry(void);
 void Menu_ModifyParam_0_511(void);
 void Menu_ModifyParam_0_1(void);
+void Menu_ModifyParam_LightMode(void);
 void Menu_OnRotationCW(void);
 void Menu_OnRotationCCW(void);
 void Menu_OnPression(void);
