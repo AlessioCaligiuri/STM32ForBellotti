@@ -100,6 +100,7 @@ void MyMenu_CreateEntries(void)
 	Menu_FillEntryWithZeros(&mesL1_dmxCheck);
 	strcpy(mesL1_dmxCheck.name,	 	"   DMX CHECK    ");
 	strcpy(mesL1_dmxCheck.surname, 	"                ");
+	mesL1_dmxCheck.onPression = Menu_DMXCheckOnLCD;
 	mesL1_dmxCheck.previousEntry = &mesL1_fullOn;
 
 	/*************** Level 2 entries ****************/
@@ -182,6 +183,77 @@ void MyMenu_CreateEntries(void)
 	mesL2_ds_back.nextEntry = &mesL2_ds_redA;
 	mesL2_ds_back.upperLevelEntry = &mesL1_dmxSettings;
 	mesL2_ds_back.onPression = Menu_GoUpperLevel;
+
+
+	/**** Level 2 of Manual Settings *****/
+	/* Red A Light */
+	Menu_FillEntryWithZeros(&mesL2_ms_redA);
+	strcpy(mesL2_ms_redA.name,	 "  Red A Light   ");
+	strcpy(mesL2_ms_redA.surname,"press to modify ");
+	mesL2_ms_redA.previousEntry = &mesL2_ms_back;
+	mesL2_ms_redA.nextEntry = &mesL2_ms_greenA;
+	mesL2_ms_redA.upperLevelEntry = &mesL1_manualSettings;
+	mesL2_ms_redA.param = &light_redA;
+	mesL2_ms_redA.onPression = Menu_ModifyParam_0_255;
+
+	/* Green A Light */
+	Menu_FillEntryWithZeros(&mesL2_ms_greenA);
+	strcpy(mesL2_ms_greenA.name,	" Green A Light  ");
+	strcpy(mesL2_ms_greenA.surname,	"press to modify ");
+	mesL2_ms_greenA.previousEntry = &mesL2_ms_redA;
+	mesL2_ms_greenA.nextEntry = &mesL2_ms_blueA;
+	mesL2_ms_greenA.upperLevelEntry = &mesL1_manualSettings;
+	mesL2_ms_greenA.param = &light_greenA;
+	mesL2_ms_greenA.onPression = Menu_ModifyParam_0_255;
+
+	/* Blue A Light */
+	Menu_FillEntryWithZeros(&mesL2_ms_blueA);
+	strcpy(mesL2_ms_blueA.name,	  "  Blue A Light  ");
+	strcpy(mesL2_ms_blueA.surname,"press to modify ");
+	mesL2_ms_blueA.previousEntry = &mesL2_ms_greenA;
+	mesL2_ms_blueA.nextEntry = &mesL2_ms_redB;
+	mesL2_ms_blueA.upperLevelEntry = &mesL1_manualSettings;
+	mesL2_ms_blueA.param = &light_blueA;
+	mesL2_ms_blueA.onPression = Menu_ModifyParam_0_255;
+
+	/* Red B Light */
+	Menu_FillEntryWithZeros(&mesL2_ms_redB);
+	strcpy(mesL2_ms_redB.name,	 "  Red B Light   ");
+	strcpy(mesL2_ms_redB.surname,"press to modify ");
+	mesL2_ms_redB.previousEntry = &mesL2_ms_blueA;
+	mesL2_ms_redB.nextEntry = &mesL2_ms_greenB;
+	mesL2_ms_redB.upperLevelEntry = &mesL1_manualSettings;
+	mesL2_ms_redB.param = &light_redB;
+	mesL2_ms_redB.onPression = Menu_ModifyParam_0_255;
+
+	/* Green B Light */
+	Menu_FillEntryWithZeros(&mesL2_ms_greenB);
+	strcpy(mesL2_ms_greenB.name,	" Green B Light  ");
+	strcpy(mesL2_ms_greenB.surname,	"press to modify ");
+	mesL2_ms_greenB.previousEntry = &mesL2_ms_redB;
+	mesL2_ms_greenB.nextEntry = &mesL2_ms_blueB;
+	mesL2_ms_greenB.upperLevelEntry = &mesL1_manualSettings;
+	mesL2_ms_greenB.param = &light_greenB;
+	mesL2_ms_greenB.onPression = Menu_ModifyParam_0_255;
+
+	/* Blue B Light */
+	Menu_FillEntryWithZeros(&mesL2_ms_blueB);
+	strcpy(mesL2_ms_blueB.name,	  "  Blue B Light  ");
+	strcpy(mesL2_ms_blueB.surname,"press to modify ");
+	mesL2_ms_blueB.previousEntry = &mesL2_ms_greenB;
+	mesL2_ms_blueB.nextEntry = &mesL2_ms_back;
+	mesL2_ms_blueB.upperLevelEntry = &mesL1_manualSettings;
+	mesL2_ms_blueB.param = &light_blueB;
+	mesL2_ms_blueB.onPression = Menu_ModifyParam_0_255;
+
+	/* Back */
+	Menu_FillEntryWithZeros(&mesL2_ms_back);
+	strcpy(mesL2_ms_back.name,	  "  Back to main  ");
+	strcpy(mesL2_ms_back.surname, "      menu      ");
+	mesL2_ms_back.previousEntry = &mesL2_ms_blueB;
+	mesL2_ms_back.nextEntry = &mesL2_ms_redA;
+	mesL2_ms_back.upperLevelEntry = &mesL1_manualSettings;
+	mesL2_ms_back.onPression = Menu_GoUpperLevel;
 
 	MyMenu_initialEntryPtr = &mesL1_lightMode;
 }

@@ -20,6 +20,12 @@
 
 #include "menu.h"
 #include "HD44780.h"
+#include "DMX.h"
+
+/**
+ * @brief	Max time in ms between encoder rotations to turn on "turbo rotation" mode.
+ */
+#define MAX_ELAPSED_SYSTICK_ROTATION	150
 
 /**
  * @brief	Used in "Modify Parameter" mode to temporary hold the value
@@ -31,6 +37,12 @@ int tempParam;
  * @brief True if a parameter has been modified without saving.
  */
 int menuParamIsModified = 0;
+
+/**
+ * @brief	Used in DMX Check on LCD to determine which channels have to be shown.
+ * 			This variable specifies the first channel shown at left.
+ */
+int dmxCheckOnLCD_Ch_1stColumn = 1;
 
 /**
  * @brief	Menu initialization.
@@ -113,8 +125,6 @@ void Menu_OnPression(void)
 	case ParamModified_0_511:
 	case ParamModify_0_1:
 	case ParamModified_0_1:
-	case ParamModify_LightMode:
-	case ParamModified_LightMode:
 		if(tempParam != *((Menu_currentEntry->param)))
 		{
 			Menu_currentEntry->isModified = 1; //this menu entry parameter has been modified
@@ -124,6 +134,37 @@ void Menu_OnPression(void)
 		menuState = NavigationUpdate;
 		LCD_CursorMode(Invisible_Cursor);
 		break;
+
+	case ParamModify_LightMode:
+	case ParamModified_LightMode:
+		if(tempParam != *((LightMode_t*)((Menu_currentEntry->param))))
+		{
+			Menu_currentEntry->isModified = 1; //this menu entry parameter has been modified
+			menuParamIsModified = 1;		//some menu entry parameter has been modified
+			*((LightMode_t*)(Menu_currentEntry->param)) = (LightMode_t)tempParam; //store the new value into the variable
+		}
+		menuState = NavigationUpdate;
+		LCD_CursorMode(Invisible_Cursor);
+		break;
+
+	case ParamModify_0_255:
+	case ParamModified_0_255:
+		if(tempParam != *((uint8_t*)((Menu_currentEntry->param))))
+		{
+			Menu_currentEntry->isModified = 1; //this menu entry parameter has been modified
+			menuParamIsModified = 1;		//some menu entry parameter has been modified
+			*((uint8_t*)((Menu_currentEntry->param))) = (uint8_t)tempParam; //store the new value into the variable
+		}
+		menuState = NavigationUpdate;
+		LCD_CursorMode(Invisible_Cursor);
+		break;
+
+	case DMXCheckOnLCD_Entered:
+	case DMXCheckOnLCD_Update:
+	case DMXCheckOnLCD_SwitchedChannels:
+		menuState = NavigationUpdate;
+		break;
+
 	default:
 		break;
 	}
@@ -141,6 +182,21 @@ void Menu_ModifyParam_0_511(void)
 	{
 		menuState = ParamModify_0_511;
 		tempParam = *((Menu_currentEntry->param));
+	}
+}
+
+/**
+ * @brief	Used as "onPression" when the menu entry can modify a parameter
+ * 			with 0 - 255 bounds (uint8_t).
+ * 			Set the menu mode as "Parameter Modify", then load the current
+ * 			parameter value into a temporary variable.
+ */
+void Menu_ModifyParam_0_255(void)
+{
+	if(Menu_currentEntry->param) //check if pointer is not equal to 0
+	{
+		menuState = ParamModify_0_255;
+		tempParam = *((uint8_t*)((Menu_currentEntry->param)));
 	}
 }
 
@@ -181,9 +237,10 @@ void Menu_ModifyParam_LightMode(void)
  */
 void Menu_Show(void)
 {
+	/********************** Switch for menu state **********************/
 	switch(menuState)
 	{
-
+	/******** Switch for menu state: case Navigation Update ************/
 	case NavigationUpdate: /* A new entry has to be shown */
 		LCD_Clear_Display();
 		LCD_printf(Menu_currentEntry->name);
@@ -196,7 +253,8 @@ void Menu_Show(void)
 		}
 		menuState = Navigation;
 		break;
-
+	/*********** Switch for menu state: case Param Mod. ***************/
+	case ParamModify_0_255:
 	case ParamModify_0_511: /* If the param is going to be modified */
 		LCD_2ndRow();
 		LCD_printf("                ");
@@ -209,7 +267,9 @@ void Menu_Show(void)
 		LCD_CursorMode(BlinkingBlock_Cursor);
 		break;
 
+		/*********** Switch for menu state: case Param Mod. ***************/
 	/* If the param has been modified, re-print only the parameter value */
+	case ParamModified_0_255:
 	case ParamModified_0_511:
 		LCD_Locate(2, 8);
 		LCD_printf("%d  ",tempParam);
@@ -218,6 +278,7 @@ void Menu_Show(void)
 		LCD_CMD(0x10); //shift cursor left
 		break;
 
+	/*********** Switch for menu state: case Param Mod. ***************/
 	case ParamModify_0_1: /* If the param is going to be modified */
 		LCD_2ndRow();
 		LCD_printf("                ");
@@ -234,6 +295,7 @@ void Menu_Show(void)
 		LCD_CursorMode(BlinkingBlock_Cursor);
 		break;
 
+	/*********** Switch for menu state: case Param Mod. ***************/
 	/* If the param has been modified, re-print only the parameter value */
 	case ParamModified_0_1:
 		LCD_Locate(2, 8);
@@ -248,6 +310,7 @@ void Menu_Show(void)
 		LCD_Locate(2, 8);
 		break;
 
+	/*********** Switch for menu state: case Param Mod. ***************/
 	case ParamModify_LightMode: /* If the param is going to be modified */
 		LCD_2ndRow();
 		LCD_printf("                ");
@@ -269,6 +332,7 @@ void Menu_Show(void)
 		LCD_CursorMode(BlinkingBlock_Cursor);
 		break;
 
+	/*********** Switch for menu state: case Param Mod. ***************/
 	/* If the param has been modified, re-print only the parameter value */
 	case ParamModified_LightMode:
 		LCD_2ndRow();
@@ -287,8 +351,128 @@ void Menu_Show(void)
 		}
 		break;
 
+	/*********** Switch for menu state: case Navigation *************/
 	case Navigation:
 		break;
+
+	/*********** Switch for menu state: case DMX Check **************/
+	case DMXCheckOnLCD_Entered:
+		LCD_Clear_Display();
+		switch(DMX_Mode)
+		{
+		case DMX_MODE_DATA:
+		case DMX_MODE_BREAK:
+			LCD_printf("Ch.");
+			LCD_Locate(1,6);
+			LCD_printf("%d",dmxCheckOnLCD_Ch_1stColumn);
+			LCD_Locate(1,10);
+			LCD_printf("%d",dmxCheckOnLCD_Ch_1stColumn+1);
+			LCD_Locate(1,14);
+			LCD_printf("%d",dmxCheckOnLCD_Ch_1stColumn+2);
+			LCD_2ndRow();
+			LCD_printf("Val.");
+			LCD_Locate(2,6);
+			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn]);
+			LCD_Locate(2,10);
+			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn + 1]);
+			LCD_Locate(2,14);
+			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn + 2]);
+			break;
+		case DMX_MODE_UNKNOWN_SC:
+			LCD_printf("Unknown start");
+			LCD_2ndRow();
+			LCD_printf("code: %d",dmx_Rx_Data[0]);
+			break;
+		case DMX_MODE_ERROR:
+			LCD_printf("   DMX Error!   ");
+			break;
+		case DMX_MODE_INIT:
+			LCD_printf("DMX Initialized ");
+			break;
+		default:
+			break;
+		}
+		menuState = DMXCheckOnLCD_Update;
+		break;
+
+	/*********** Switch for menu state: case DMX Check **************/
+	case DMXCheckOnLCD_Update:
+		switch(DMX_Mode)
+		{
+		case DMX_MODE_DATA:
+		case DMX_MODE_BREAK:
+			LCD_Locate(2,6);
+			LCD_printf("           ");
+			LCD_Locate(2,6);
+			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn]);
+			LCD_Locate(2,10);
+			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn + 1]);
+			LCD_Locate(2,14);
+			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn + 2]);
+			break;
+		case DMX_MODE_UNKNOWN_SC:
+			LCD_Clear_Display();
+			LCD_printf("Unknown start");
+			LCD_2ndRow();
+			LCD_printf("code: %d",dmx_Rx_Data[0]);
+			break;
+		case DMX_MODE_ERROR:
+			LCD_Clear_Display();
+			LCD_printf("   DMX Error!   ");
+			break;
+		case DMX_MODE_INIT:
+			LCD_Clear_Display();
+			LCD_printf("DMX Initialized ");
+			break;
+		default:
+			break;
+		}
+		break;
+
+	/*********** Switch for menu state: case DMX Check **************/
+	case DMXCheckOnLCD_SwitchedChannels:
+		switch(DMX_Mode)
+		{
+		case DMX_MODE_DATA:
+		case DMX_MODE_BREAK:
+			LCD_Locate(1,6);
+			LCD_printf("           ");
+			LCD_Locate(1,6);
+			LCD_printf("%d",dmxCheckOnLCD_Ch_1stColumn);
+			LCD_Locate(1,10);
+			LCD_printf("%d",dmxCheckOnLCD_Ch_1stColumn+1);
+			LCD_Locate(1,14);
+			LCD_printf("%d",dmxCheckOnLCD_Ch_1stColumn+2);
+			LCD_Locate(2,6);
+			LCD_printf("           ");
+			LCD_Locate(2,6);
+			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn]);
+			LCD_Locate(2,10);
+			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn + 1]);
+			LCD_Locate(2,14);
+			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn + 2]);
+			break;
+		case DMX_MODE_UNKNOWN_SC:
+			LCD_Clear_Display();
+			LCD_printf("Unknown start");
+			LCD_2ndRow();
+			LCD_printf("code: %d",dmx_Rx_Data[0]);
+			break;
+		case DMX_MODE_ERROR:
+			LCD_Clear_Display();
+			LCD_printf("   DMX Error!   ");
+			break;
+		case DMX_MODE_INIT:
+			LCD_Clear_Display();
+			LCD_printf("DMX Initialized ");
+			break;
+		default:
+			break;
+		}
+		menuState = DMXCheckOnLCD_Update;
+		break;
+
+	/************* Switch for menu state: default case **************/
 	default:
 		break;
 	}
@@ -299,6 +483,16 @@ void Menu_Show(void)
  */
 void Menu_OnRotationCW(void)
 {
+	static uint32_t prevSystick = 0; /*!< Previous Systick value for encoder
+											rotation speed 					*/
+
+	uint32_t currSystick = HAL_GetTick(); /*!< Current Systick value for
+												encoder rotation speed 		*/
+
+
+	/* If the encoder is rotated quickly, turboRotation is on */
+	int turboRotationIsOn = ((currSystick - prevSystick) < MAX_ELAPSED_SYSTICK_ROTATION);
+
 	/**
 	 * If the menu state is "navigation", then switch to the next menu entry.
 	 * If the menu state is "parameter modify", then increment the temporary
@@ -313,7 +507,14 @@ void Menu_OnRotationCW(void)
 	case ParamModify_0_511:
 		if(tempParam < 511)
 		{
-			tempParam++;
+			if(turboRotationIsOn & (tempParam < 506))
+			{
+				tempParam+=5;
+			}
+			else
+			{
+				tempParam++;
+			}
 		}
 		menuState = ParamModified_0_511;
 		break;
@@ -321,7 +522,43 @@ void Menu_OnRotationCW(void)
 	case ParamModified_0_511:
 		if(tempParam < 511)
 		{
-			tempParam++;
+			if(turboRotationIsOn & (tempParam < 506))
+			{
+				tempParam+=5;
+			}
+			else
+			{
+				tempParam++;
+			}
+		}
+		break;
+
+	case ParamModify_0_255:
+		if(tempParam < 255)
+		{
+			if(turboRotationIsOn & (tempParam < 250))
+			{
+				tempParam+=5;
+			}
+			else
+			{
+				tempParam++;
+			}
+		}
+		menuState = ParamModified_0_255;
+		break;
+
+	case ParamModified_0_255:
+		if(tempParam < 255)
+		{
+			if(turboRotationIsOn & (tempParam < 250))
+			{
+				tempParam+=5;
+			}
+			else
+			{
+				tempParam++;
+			}
 		}
 		break;
 
@@ -359,9 +596,27 @@ void Menu_OnRotationCW(void)
 			menuState = ParamNotModified_LightMode;
 		}
 		break;
+
+	case DMXCheckOnLCD_Entered:
+	case DMXCheckOnLCD_Update:
+		if(dmxCheckOnLCD_Ch_1stColumn < 510)
+		{
+			if(turboRotationIsOn && (dmxCheckOnLCD_Ch_1stColumn < 501))
+			{
+				dmxCheckOnLCD_Ch_1stColumn+=10;
+			}
+			else
+			{
+				dmxCheckOnLCD_Ch_1stColumn++;
+			}
+		}
+		menuState = DMXCheckOnLCD_SwitchedChannels;
+		break;
 	default:
 		break;
 	}
+
+	prevSystick = currSystick; //update previous value with current
 }
 
 /**
@@ -369,6 +624,17 @@ void Menu_OnRotationCW(void)
  */
 void Menu_OnRotationCCW(void)
 {
+
+	static uint32_t prevSystick = 0; /*!< Previous Systick value for encoder
+											rotation speed 					*/
+
+	uint32_t currSystick = HAL_GetTick(); /*!< Current Systick value for
+												encoder rotation speed 		*/
+
+
+	/* If the encoder is rotated quickly, turboRotation is on */
+	int turboRotationIsOn = ((currSystick - prevSystick) < MAX_ELAPSED_SYSTICK_ROTATION);
+
 	/**
 	 * If the menu state is "navigation", then switch to the next menu entry.
 	 * If the menu state is "parameter modify", then decrement the temporary
@@ -383,7 +649,14 @@ void Menu_OnRotationCCW(void)
 	case ParamModify_0_511:
 		if(tempParam > 0)
 		{
-			tempParam--;
+			if(turboRotationIsOn & (tempParam > 5))
+			{
+				tempParam-=5;
+			}
+			else
+			{
+				tempParam--;
+			}
 		}
 		menuState = ParamModified_0_511;
 		break;
@@ -391,7 +664,43 @@ void Menu_OnRotationCCW(void)
 	case ParamModified_0_511:
 		if(tempParam > 0)
 		{
-			tempParam--;
+			if(turboRotationIsOn & (tempParam > 5))
+			{
+				tempParam-=5;
+			}
+			else
+			{
+				tempParam--;
+			}
+		}
+		break;
+
+	case ParamModify_0_255:
+		if(tempParam > 0)
+		{
+			if(turboRotationIsOn & (tempParam > 5))
+			{
+				tempParam-=5;
+			}
+			else
+			{
+				tempParam--;
+			}
+		}
+		menuState = ParamModified_0_255;
+		break;
+
+	case ParamModified_0_255:
+		if(tempParam > 0)
+		{
+			if(turboRotationIsOn & (tempParam > 5))
+			{
+				tempParam-=5;
+			}
+			else
+			{
+				tempParam--;
+			}
 		}
 		break;
 
@@ -423,9 +732,32 @@ void Menu_OnRotationCCW(void)
 			menuState = ParamNotModified_LightMode;
 		}
 		break;
+
+	case DMXCheckOnLCD_Entered:
+	case DMXCheckOnLCD_Update:
+		if(dmxCheckOnLCD_Ch_1stColumn > 1)
+		{
+			if(turboRotationIsOn && (dmxCheckOnLCD_Ch_1stColumn > 10))
+			{
+				dmxCheckOnLCD_Ch_1stColumn-=10;
+			}
+			else
+			{
+				dmxCheckOnLCD_Ch_1stColumn--;
+			}
+		}
+		menuState = DMXCheckOnLCD_SwitchedChannels;
+		break;
+
 	default:
 		break;
 	}
+	prevSystick = currSystick; //update previous value with current
+}
+
+void Menu_DMXCheckOnLCD()
+{
+	menuState = DMXCheckOnLCD_Entered;
 }
 
 /**

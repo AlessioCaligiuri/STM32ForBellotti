@@ -34,7 +34,8 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MAIN_H
 #define __MAIN_H
-  /* Includes ------------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
+#include <stdint.h>	//included to use uintXX_t types
 
 /* USER CODE BEGIN Includes */
 
@@ -125,6 +126,15 @@ extern int dmxCh_blueB;
 extern LightMode_t lightMode;
 
 extern int dmxThruModeIsActive;
+
+extern uint8_t light_redA;
+extern uint8_t light_greenA;
+extern uint8_t light_blueA;
+extern uint8_t light_redB;
+extern uint8_t light_greenB;
+extern uint8_t light_blueB;
+
+extern uint8_t dmx_Rx_Data[513];
 
 /**
   * @}

@@ -38,6 +38,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "DMX.h"
 
 /* USER CODE BEGIN Includes */
 #include "userInterface.h"
@@ -56,6 +57,42 @@ int dmxCh_blueB;
 int fullOnIsActive = 0;
 int dmxThruModeIsActive = 1;
 LightMode_t lightMode = LightMode_DMXControlled;
+
+/**
+ * @brief	Light of red A in manual mode.
+ */
+uint8_t light_redA;
+
+/**
+ * @brief	Light of green A in manual mode.
+ */
+uint8_t light_greenA;
+
+/**
+ * @brief	Light of blue A in manual mode.
+ */
+uint8_t light_blueA;
+
+/**
+ * @brief	Light of red B in manual mode.
+ */
+uint8_t light_redB;
+
+/**
+ * @brief	Light of green B in manual mode.
+ */
+uint8_t light_greenB;
+
+/**
+ * @brief	Light of blue B in manual mode.
+ */
+uint8_t light_blueB;
+
+/**
+ * @brief	DMX received data. The position 0 is the Start Code.
+ */
+uint8_t dmx_Rx_Data[513];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -96,7 +133,7 @@ int main(void)
 
   UI_Init();
   /* USER CODE END 2 */
-
+  DMX_Mode = DMX_MODE_DATA;
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
