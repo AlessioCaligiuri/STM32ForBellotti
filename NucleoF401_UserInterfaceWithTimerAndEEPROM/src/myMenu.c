@@ -113,7 +113,7 @@ void MyMenu_CreateEntries(void)
 	mesL2_ds_redA.nextEntry = &mesL2_ds_greenA;
 	mesL2_ds_redA.upperLevelEntry = &mesL1_dmxSettings;
 	mesL2_ds_redA.param = &dmxCh_redA;
-	mesL2_ds_redA.onPression = Menu_ModifyParam_0_511;
+	mesL2_ds_redA.onPression = Menu_ModifyParam_1_512;
 
 	/* Green A Ch. */
 	Menu_FillEntryWithZeros(&mesL2_ds_greenA);
@@ -123,7 +123,7 @@ void MyMenu_CreateEntries(void)
 	mesL2_ds_greenA.nextEntry = &mesL2_ds_blueA;
 	mesL2_ds_greenA.upperLevelEntry = &mesL1_dmxSettings;
 	mesL2_ds_greenA.param = &dmxCh_greenA;
-	mesL2_ds_greenA.onPression = Menu_ModifyParam_0_511;
+	mesL2_ds_greenA.onPression = Menu_ModifyParam_1_512;
 
 	/* Blue A Ch. */
 	Menu_FillEntryWithZeros(&mesL2_ds_blueA);
@@ -133,7 +133,7 @@ void MyMenu_CreateEntries(void)
 	mesL2_ds_blueA.nextEntry = &mesL2_ds_redB;
 	mesL2_ds_blueA.upperLevelEntry = &mesL1_dmxSettings;
 	mesL2_ds_blueA.param = &dmxCh_blueA;
-	mesL2_ds_blueA.onPression = Menu_ModifyParam_0_511;
+	mesL2_ds_blueA.onPression = Menu_ModifyParam_1_512;
 
 	/* Red B Ch. */
 	Menu_FillEntryWithZeros(&mesL2_ds_redB);
@@ -143,7 +143,7 @@ void MyMenu_CreateEntries(void)
 	mesL2_ds_redB.nextEntry = &mesL2_ds_greenB;
 	mesL2_ds_redB.upperLevelEntry = &mesL1_dmxSettings;
 	mesL2_ds_redB.param = &dmxCh_redB;
-	mesL2_ds_redB.onPression = Menu_ModifyParam_0_511;
+	mesL2_ds_redB.onPression = Menu_ModifyParam_1_512;
 
 	/* Green B Ch. */
 	Menu_FillEntryWithZeros(&mesL2_ds_greenB);
@@ -153,7 +153,7 @@ void MyMenu_CreateEntries(void)
 	mesL2_ds_greenB.nextEntry = &mesL2_ds_blueB;
 	mesL2_ds_greenB.upperLevelEntry = &mesL1_dmxSettings;
 	mesL2_ds_greenB.param = &dmxCh_greenB;
-	mesL2_ds_greenB.onPression = Menu_ModifyParam_0_511;
+	mesL2_ds_greenB.onPression = Menu_ModifyParam_1_512;
 
 	/* Blue B Ch. */
 	Menu_FillEntryWithZeros(&mesL2_ds_blueB);
@@ -163,7 +163,7 @@ void MyMenu_CreateEntries(void)
 	mesL2_ds_blueB.nextEntry = &mesL2_ds_thru;
 	mesL2_ds_blueB.upperLevelEntry = &mesL1_dmxSettings;
 	mesL2_ds_blueB.param = &dmxCh_blueB;
-	mesL2_ds_blueB.onPression = Menu_ModifyParam_0_511;
+	mesL2_ds_blueB.onPression = Menu_ModifyParam_1_512;
 
 	/* Thru Mode */
 	Menu_FillEntryWithZeros(&mesL2_ds_thru);

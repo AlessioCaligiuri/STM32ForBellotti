@@ -45,10 +45,10 @@ typedef struct MenuEntry
 typedef enum MenuState {
 	Navigation = 0,			/*!< Used when no new entry has to be shown. 				*/
 	NavigationUpdate,		/*!< Used when a new entry has to be shown. 				*/
-	ParamModify_0_511,		/*!< Used when the user want to modify a parameter (with 0
-	 	 	 	 	 			- 511 bounds) but the value hasn't been changed yet. 	*/
-	ParamModified_0_511,	/*!< Used when the user has modified a parameter value (with
-								0 - 511 bounds).										*/
+	ParamModify_1_512,		/*!< Used when the user want to modify a parameter (with 1
+	 	 	 	 	 			- 512 bounds) but the value hasn't been changed yet. 	*/
+	ParamModified_1_512,	/*!< Used when the user has modified a parameter value (with
+								1 - 512 bounds).										*/
 	ParamModify_0_255,		/*!< Used when the user want to modify a parameter (with 0
 	 	 	 	 	 			- 255 bounds) but the value hasn't been changed yet. 	*/
 	ParamModified_0_255,	/*!< Used when the user has modified a parameter value (with
@@ -93,7 +93,7 @@ void Menu_GoLowerLevel(void);
 void Menu_GoUpperLevel(void);
 void Menu_GoPreviousEntry(void);
 void Menu_GoNextEntry(void);
-void Menu_ModifyParam_0_511(void);
+void Menu_ModifyParam_1_512(void);
 void Menu_ModifyParam_0_255(void);
 void Menu_ModifyParam_0_1(void);
 void Menu_ModifyParam_LightMode(void);

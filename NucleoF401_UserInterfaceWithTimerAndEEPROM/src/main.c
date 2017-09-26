@@ -48,12 +48,12 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-int dmxCh_redA;
-int dmxCh_greenA;
-int dmxCh_blueA;
-int dmxCh_redB;
-int dmxCh_greenB;
-int dmxCh_blueB;
+int dmxCh_redA = 1;
+int dmxCh_greenA = 2;
+int dmxCh_blueA = 3;
+int dmxCh_redB = 4;
+int dmxCh_greenB = 5;
+int dmxCh_blueB = 6;
 int fullOnIsActive = 0;
 int dmxThruModeIsActive = 1;
 LightMode_t lightMode = LightMode_DMXControlled;

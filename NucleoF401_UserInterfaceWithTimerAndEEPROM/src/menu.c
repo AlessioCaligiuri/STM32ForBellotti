@@ -121,8 +121,8 @@ void Menu_OnPression(void)
 		if(Menu_currentEntry->onPression) //if the pointer is not null
 			Menu_currentEntry->onPression();
 		break;
-	case ParamModify_0_511:
-	case ParamModified_0_511:
+	case ParamModify_1_512:
+	case ParamModified_1_512:
 	case ParamModify_0_1:
 	case ParamModified_0_1:
 		if(tempParam != *((Menu_currentEntry->param)))
@@ -172,15 +172,15 @@ void Menu_OnPression(void)
 
 /**
  * @brief	Used as "onPression" when the menu entry can modify a parameter
- * 			with 0 - 511 bounds.
+ * 			with 1 - 512 bounds.
  * 			Set the menu mode as "Parameter Modify", then load the current
  * 			parameter value into a temporary variable.
  */
-void Menu_ModifyParam_0_511(void)
+void Menu_ModifyParam_1_512(void)
 {
 	if(Menu_currentEntry->param) //check if pointer is not equal to 0
 	{
-		menuState = ParamModify_0_511;
+		menuState = ParamModify_1_512;
 		tempParam = *((Menu_currentEntry->param));
 	}
 }
@@ -255,7 +255,7 @@ void Menu_Show(void)
 		break;
 	/*********** Switch for menu state: case Param Mod. ***************/
 	case ParamModify_0_255:
-	case ParamModify_0_511: /* If the param is going to be modified */
+	case ParamModify_1_512: /* If the param is going to be modified */
 		LCD_2ndRow();
 		LCD_printf("                ");
 		LCD_2ndRow();
@@ -270,7 +270,7 @@ void Menu_Show(void)
 		/*********** Switch for menu state: case Param Mod. ***************/
 	/* If the param has been modified, re-print only the parameter value */
 	case ParamModified_0_255:
-	case ParamModified_0_511:
+	case ParamModified_1_512:
 		LCD_Locate(2, 8);
 		LCD_printf("%d  ",tempParam);
 		LCD_CMD(0x10); //shift cursor left
@@ -504,10 +504,10 @@ void Menu_OnRotationCW(void)
 		Menu_GoNextEntry();
 		break;
 
-	case ParamModify_0_511:
-		if(tempParam < 511)
+	case ParamModify_1_512:
+		if(tempParam < 512)
 		{
-			if(turboRotationIsOn & (tempParam < 506))
+			if(turboRotationIsOn & (tempParam < 508))
 			{
 				tempParam+=5;
 			}
@@ -516,13 +516,13 @@ void Menu_OnRotationCW(void)
 				tempParam++;
 			}
 		}
-		menuState = ParamModified_0_511;
+		menuState = ParamModified_1_512;
 		break;
 
-	case ParamModified_0_511:
-		if(tempParam < 511)
+	case ParamModified_1_512:
+		if(tempParam < 512)
 		{
-			if(turboRotationIsOn & (tempParam < 506))
+			if(turboRotationIsOn & (tempParam < 508))
 			{
 				tempParam+=5;
 			}
@@ -647,8 +647,8 @@ void Menu_OnRotationCCW(void)
 		Menu_GoPreviousEntry();
 		break;
 
-	case ParamModify_0_511:
-		if(tempParam > 0)
+	case ParamModify_1_512:
+		if(tempParam > 1)
 		{
 			if(turboRotationIsOn & (tempParam > 5))
 			{
@@ -659,11 +659,11 @@ void Menu_OnRotationCCW(void)
 				tempParam--;
 			}
 		}
-		menuState = ParamModified_0_511;
+		menuState = ParamModified_1_512;
 		break;
 
-	case ParamModified_0_511:
-		if(tempParam > 0)
+	case ParamModified_1_512:
+		if(tempParam > 1)
 		{
 			if(turboRotationIsOn & (tempParam > 5))
 			{
