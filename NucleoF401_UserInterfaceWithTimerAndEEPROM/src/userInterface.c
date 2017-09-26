@@ -27,16 +27,12 @@
 int encoderFlag_ButtonIsPressed;
 
 /**
- * @brief	Encoder rotation flag. 0 if no rotation has occurred.
+ * @brief	Counter for encoder rotations.
+ * 			It is incremented by clockwise rotations and decremented by
+ * 			counter-clockwise rotations.
+ * 			It is cleared when the user interface handles rotations.
  */
-int encoderFlag_IsRotated;
-
-/**
- * @brief	Encoder rotation direction. 0 if CCW, other if CW.
- */
-int encoderFlag_RotationClockwise;
-
-int encoderRotation =  0;
+int encoderRotationCount =  0;
 
 /**
  * @brief	This function is similar to HAL_Delay, but it can be interrupted
@@ -62,9 +58,9 @@ void HAL_Delay_Breakable(uint32_t Delay)
 			encoderFlag_ButtonIsPressed = 0;
 			break;
 		}
-		if(encoderFlag_IsRotated)
+		if(encoderRotationCount)
 		{
-			encoderFlag_IsRotated = 0;
+			encoderRotationCount = 0;
 			break;
 		}
 	}
@@ -82,9 +78,9 @@ void Wait_EncoderPressOrRotation(void)
 			encoderFlag_ButtonIsPressed = 0;
 			break;
 		}
-		if(encoderFlag_IsRotated)
+		if(encoderRotationCount)
 		{
-			encoderFlag_IsRotated = 0;
+			encoderRotationCount = 0;
 			break;
 		}
 	}
@@ -133,12 +129,10 @@ void UI_Update(void)
 	}
 
 	/* If encoder has been rotated */
-	if(encoderFlag_IsRotated)
+	if(encoderRotationCount) //if encoderRotationCount != 0
 	{
-		encoderFlag_IsRotated = 0; //reset flag
-
-		encoderRotCopy = encoderRotation;
-		encoderRotation = 0;
+		encoderRotCopy = encoderRotationCount;
+		encoderRotationCount = 0;
 
 		if(encoderRotCopy > 0)
 		{
@@ -155,18 +149,6 @@ void UI_Update(void)
 			}
 		}
 		Menu_Show();
-
-//		/* Check direction on rotation */
-//		if(encoderFlag_RotationClockwise)
-//		{
-//			Menu_OnRotationCW();
-//			Menu_Show();
-//		}
-//		else
-//		{
-//			Menu_OnRotationCCW();
-//			Menu_Show();
-//		}
 	}
 }
 

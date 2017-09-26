@@ -25,17 +25,7 @@
  */
 extern int encoderFlag_ButtonIsPressed;
 
-/**
- * @brief	Encoder rotation flag. 0 if no rotation has occurred.
- */
-extern int encoderFlag_IsRotated;
-
-/**
- * @brief	Encoder rotation direction. 0 if CCW, other if CW.
- */
-extern int encoderFlag_RotationClockwise;
-
-extern int encoderRotation;
+extern int encoderRotationCount;
 
 void UI_CreateEntries(void);
 void UI_Init(void);

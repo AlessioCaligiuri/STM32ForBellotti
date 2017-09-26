@@ -229,15 +229,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	{
 		if(HAL_GPIO_ReadPin(ENC_B_GPIO_Port, ENC_B_Pin)) //if(ENC_B==SET)
 		{
-			encoderFlag_RotationClockwise = 0;
-			encoderRotation--;
+			encoderRotationCount--;
 		}
 		else //if(ENC_B==RESET)
 		{
-			encoderFlag_RotationClockwise = 1;
-			encoderRotation++;
+			encoderRotationCount++;
 		}
-		encoderFlag_IsRotated = 1;
 	}
 }
 
