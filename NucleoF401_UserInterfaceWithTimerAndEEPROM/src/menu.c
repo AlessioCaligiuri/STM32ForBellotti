@@ -165,6 +165,20 @@ void Menu_OnPression(void)
 		menuState = NavigationUpdate;
 		break;
 
+	case ConfirmRequested:
+	case ConfirmRequestedModified:
+		if(tempParam)
+		{
+			LCD_2ndRow();
+			LCD_printf("                ");
+			LCD_2ndRow();
+			LCD_printf("  executing...  ");
+			((functionPtr)(Menu_currentEntry->param))();
+		}
+		menuState = NavigationUpdate;
+		LCD_CursorMode(Invisible_Cursor);
+		break;
+
 	default:
 		break;
 	}
@@ -472,6 +486,21 @@ void Menu_Show(void)
 		menuState = DMXCheckOnLCD_Update;
 		break;
 
+	/************* Switch for menu state: confirm req. **************/
+	case ConfirmRequested:
+		LCD_2ndRow();
+		LCD_printf("                ");
+		LCD_2ndRow();
+		LCD_printf("Are you sure? %c",tempParam? 'Y' : 'N');
+		LCD_Locate(2,15);
+		LCD_CursorMode(BlinkingBlock_Cursor);
+		break;
+	case ConfirmRequestedModified:
+		LCD_Locate(2,15);
+		LCD_printf("%c",tempParam? 'Y' : 'N');
+		LCD_Locate(2,15);
+		break;
+
 	/************* Switch for menu state: default case **************/
 	default:
 		break;
@@ -613,6 +642,22 @@ void Menu_OnRotationCW(void)
 		}
 		menuState = DMXCheckOnLCD_SwitchedChannels;
 		break;
+
+	case ConfirmRequested:
+		if(!tempParam)
+		{
+			tempParam = 1;
+			menuState = ConfirmRequestedModified;
+		}
+		break;
+
+	case ConfirmRequestedModified:
+			if(!tempParam)
+			{
+				tempParam = 1;
+			}
+			break;
+
 	default:
 		break;
 	}
@@ -751,6 +796,21 @@ void Menu_OnRotationCCW(void)
 		menuState = DMXCheckOnLCD_SwitchedChannels;
 		break;
 
+	case ConfirmRequested:
+		if(tempParam)
+		{
+			tempParam = 0;
+			menuState = ConfirmRequestedModified;
+		}
+		break;
+
+	case ConfirmRequestedModified:
+			if(tempParam)
+			{
+				tempParam = 0;
+			}
+			break;
+
 	default:
 		break;
 	}
@@ -782,4 +842,10 @@ void Menu_SwitchEntry(MenuEntryStruct* Menu_newEntry)
 		Menu_currentEntry = Menu_newEntry;
 		menuState = NavigationUpdate;
 	}
+}
+
+void Menu_Confirm()
+{
+	menuState = ConfirmRequested;
+	tempParam = 0; //assume NO as default choose
 }

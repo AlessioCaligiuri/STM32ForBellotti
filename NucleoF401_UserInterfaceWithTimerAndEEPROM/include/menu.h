@@ -67,8 +67,10 @@ typedef enum MenuState {
 	 	 	 	 	 	 	 	 	 	 has just been entered */
 	DMXCheckOnLCD_Update,		/*!< Used when the LCD displays DMX data and the values
 										have to be updated */
-	DMXCheckOnLCD_SwitchedChannels /*!< Used when the LCD displays DMX data and the channels
+	DMXCheckOnLCD_SwitchedChannels, /*!< Used when the LCD displays DMX data and the channels
 										to show have been modified */
+	ConfirmRequested,
+	ConfirmRequestedModified
 } MenuState_t;
 
 /**
@@ -102,6 +104,7 @@ void Menu_OnRotationCW(void);
 void Menu_OnRotationCCW(void);
 void Menu_OnPression(void);
 void Menu_SwitchEntry(MenuEntryStruct* Menu_newEntry);
+void Menu_Confirm(void);
 
 
 #endif /* __MENU_H */

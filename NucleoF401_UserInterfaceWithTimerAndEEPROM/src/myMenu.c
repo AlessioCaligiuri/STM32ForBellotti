@@ -2,6 +2,7 @@
 #include "main.h"
 #include "myMenu.h"
 #include <string.h>
+#include "EEPROM.h"
 
 /**
   ******************************************************************************
@@ -29,6 +30,7 @@ MenuEntryStruct mesL1_dmxSettings;
 MenuEntryStruct mesL1_manualSettings;
 MenuEntryStruct mesL1_fullOn;
 MenuEntryStruct mesL1_dmxCheck;
+MenuEntryStruct mesL1_memory;
 
 /* Level 2 of DMX Settings entries */
 MenuEntryStruct mesL2_ds_redA;
@@ -53,6 +55,12 @@ MenuEntryStruct mesL2_ms_back;
 MenuEntryStruct mesL2_dc_serial;
 MenuEntryStruct mesL2_dc_lcd;
 MenuEntryStruct mesL2_dc_back;
+
+/* Level 2 of Memory entries */
+MenuEntryStruct mesL2_mem_load;
+MenuEntryStruct mesL2_mem_save;
+MenuEntryStruct mesL2_mem_restore;
+MenuEntryStruct mesL2_mem_back;
 
 /* END Entries structs ----------------------------------------------------- */
 
@@ -102,8 +110,17 @@ void MyMenu_CreateEntries(void)
 	strcpy(mesL1_dmxCheck.name,	 	"   DMX CHECK    ");
 	strcpy(mesL1_dmxCheck.surname, 	"                ");
 	mesL1_dmxCheck.previousEntry = &mesL1_fullOn;
+	mesL1_dmxCheck.nextEntry = &mesL1_memory;
 	mesL1_dmxCheck.lowerLevelEntry = &mesL2_dc_serial;
 	mesL1_dmxCheck.onPression = Menu_GoLowerLevel;
+
+	/* Memory */
+	Menu_FillEntryWithZeros(&mesL1_memory);
+	strcpy(mesL1_memory.name,	 	"     MEMORY     ");
+	strcpy(mesL1_memory.surname, 	"                ");
+	mesL1_memory.previousEntry = &mesL1_dmxCheck;
+	mesL1_memory.lowerLevelEntry = &mesL2_mem_load;
+	mesL1_memory.onPression = Menu_GoLowerLevel;
 
 	/*************** Level 2 entries ****************/
 	/**** Level 2 of Dmx Settings *****/
@@ -284,7 +301,42 @@ void MyMenu_CreateEntries(void)
 	mesL2_dc_back.upperLevelEntry = &mesL1_dmxCheck;
 	mesL2_dc_back.onPression = Menu_GoUpperLevel;
 
+	/*************** Level 2 entries ****************/
+	/**** Level 2 of Memory *****/
+	Menu_FillEntryWithZeros(&mesL2_mem_load);
+	strcpy(mesL2_mem_load.name,	   " Load settings  ");
+	strcpy(mesL2_mem_load.surname, " press to enter ");
+	mesL2_mem_load.previousEntry = &mesL2_mem_back;
+	mesL2_mem_load.nextEntry = &mesL2_mem_save;
+	mesL2_mem_load.upperLevelEntry = &mesL1_memory;
+	mesL2_mem_load.param = EEPROM_LoadFromMemory;
+	mesL2_mem_load.onPression = Menu_Confirm;
 
+	Menu_FillEntryWithZeros(&mesL2_mem_save);
+	strcpy(mesL2_mem_save.name,	   " Save settings  ");
+	strcpy(mesL2_mem_save.surname, " press to enter ");
+	mesL2_mem_save.previousEntry = &mesL2_mem_load;
+	mesL2_mem_save.nextEntry = &mesL2_mem_restore;
+	mesL2_mem_save.upperLevelEntry = &mesL1_memory;
+	mesL2_mem_save.param = EEPROM_SaveToMemory;
+	mesL2_mem_save.onPression = Menu_Confirm;
+
+	Menu_FillEntryWithZeros(&mesL2_mem_restore);
+	strcpy(mesL2_mem_restore.name,	   "Restore settings");
+	strcpy(mesL2_mem_restore.surname, " press to enter ");
+	mesL2_mem_restore.previousEntry = &mesL2_mem_save;
+	mesL2_mem_restore.nextEntry = &mesL2_mem_back;
+	mesL2_mem_restore.upperLevelEntry = &mesL1_memory;
+	mesL2_mem_restore.param = EEPROM_RestoreDefaultMemory;
+	mesL2_mem_restore.onPression = Menu_Confirm;
+
+	Menu_FillEntryWithZeros(&mesL2_mem_back);
+	strcpy(mesL2_mem_back.name,	   "  Back to main  ");
+	strcpy(mesL2_mem_back.surname, "      menu      ");
+	//mesL2_mem_back.previousEntry = &mesL2_mem_restore;
+	mesL2_mem_back.nextEntry = &mesL2_mem_load;
+	mesL2_mem_back.upperLevelEntry = &mesL1_memory;
+	mesL2_mem_back.onPression = Menu_GoUpperLevel;
 
 	MyMenu_initialEntryPtr = &mesL1_lightMode;
 }
