@@ -93,6 +93,8 @@ uint8_t light_blueB;
  */
 uint8_t dmx_Rx_Data[513];
 
+int dmxCheckViaSerial_isOn = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

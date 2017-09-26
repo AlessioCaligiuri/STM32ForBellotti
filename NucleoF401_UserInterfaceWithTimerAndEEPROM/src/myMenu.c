@@ -52,6 +52,7 @@ MenuEntryStruct mesL2_ms_back;
 /* Level 2 of DMX check entries */
 MenuEntryStruct mesL2_dc_serial;
 MenuEntryStruct mesL2_dc_lcd;
+MenuEntryStruct mesL2_dc_back;
 
 /* END Entries structs ----------------------------------------------------- */
 
@@ -100,8 +101,9 @@ void MyMenu_CreateEntries(void)
 	Menu_FillEntryWithZeros(&mesL1_dmxCheck);
 	strcpy(mesL1_dmxCheck.name,	 	"   DMX CHECK    ");
 	strcpy(mesL1_dmxCheck.surname, 	"                ");
-	mesL1_dmxCheck.onPression = Menu_DMXCheckOnLCD;
 	mesL1_dmxCheck.previousEntry = &mesL1_fullOn;
+	mesL1_dmxCheck.lowerLevelEntry = &mesL2_dc_serial;
+	mesL1_dmxCheck.onPression = Menu_GoLowerLevel;
 
 	/*************** Level 2 entries ****************/
 	/**** Level 2 of Dmx Settings *****/
@@ -254,6 +256,35 @@ void MyMenu_CreateEntries(void)
 	mesL2_ms_back.nextEntry = &mesL2_ms_redA;
 	mesL2_ms_back.upperLevelEntry = &mesL1_manualSettings;
 	mesL2_ms_back.onPression = Menu_GoUpperLevel;
+
+	/*************** Level 2 entries ****************/
+	/**** Level 2 of Dmx Check *****/
+	Menu_FillEntryWithZeros(&mesL2_dc_serial);
+	strcpy(mesL2_dc_serial.name,    " Via serial USB ");
+	strcpy(mesL2_dc_serial.surname, "press to on/off ");
+	mesL2_dc_serial.previousEntry = &mesL2_dc_back;
+	mesL2_dc_serial.nextEntry = &mesL2_dc_lcd;
+	mesL2_dc_serial.upperLevelEntry = &mesL1_dmxCheck;
+	mesL2_dc_serial.param = &dmxCheckViaSerial_isOn;
+	mesL2_dc_serial.onPression = Menu_ModifyParam_0_1;
+
+	Menu_FillEntryWithZeros(&mesL2_dc_lcd);
+	strcpy(mesL2_dc_lcd.name,    "     On LCD     ");
+	strcpy(mesL2_dc_lcd.surname, " press to enter ");
+	mesL2_dc_lcd.previousEntry = &mesL2_dc_serial;
+	mesL2_dc_lcd.nextEntry = &mesL2_dc_back;
+	mesL2_dc_lcd.upperLevelEntry = &mesL1_dmxCheck;
+	mesL2_dc_lcd.onPression = Menu_DMXCheckOnLCD;
+
+	Menu_FillEntryWithZeros(&mesL2_dc_back);
+	strcpy(mesL2_dc_back.name,	  "  Back to main  ");
+	strcpy(mesL2_dc_back.surname, "      menu      ");
+	mesL2_dc_back.previousEntry = &mesL2_dc_lcd;
+	mesL2_dc_back.nextEntry = &mesL2_dc_serial;
+	mesL2_dc_back.upperLevelEntry = &mesL1_dmxCheck;
+	mesL2_dc_back.onPression = Menu_GoUpperLevel;
+
+
 
 	MyMenu_initialEntryPtr = &mesL1_lightMode;
 }

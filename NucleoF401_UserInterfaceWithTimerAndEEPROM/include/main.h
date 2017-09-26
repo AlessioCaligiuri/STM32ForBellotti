@@ -135,6 +135,7 @@ extern uint8_t light_greenB;
 extern uint8_t light_blueB;
 
 extern uint8_t dmx_Rx_Data[513];
+extern int dmxCheckViaSerial_isOn;
 
 /**
   * @}
