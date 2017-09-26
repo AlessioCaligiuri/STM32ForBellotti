@@ -67,7 +67,7 @@ void MyMenu_CreateEntries(void)
 	strcpy(mesL1_lightMode.name,	"   LIGHT MODE   ");
 	strcpy(mesL1_lightMode.surname, "press to change ");
 	mesL1_lightMode.nextEntry = &mesL1_dmxSettings;
-	mesL1_lightMode.param = (int*)&lightMode;
+	mesL1_lightMode.param = &lightMode;
 	mesL1_lightMode.onPression = Menu_ModifyParam_LightMode;
 
 	/* DMX Settings */
