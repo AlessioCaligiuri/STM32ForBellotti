@@ -25,7 +25,7 @@
 /**
  * @brief	Max time in ms between encoder rotations to turn on "turbo rotation" mode.
  */
-#define MAX_ELAPSED_SYSTICK_ROTATION	150
+#define MAX_ELAPSED_SYSTICK_ROTATION	50
 
 /**
  * @brief	Used in "Modify Parameter" mode to temporary hold the value
@@ -599,11 +599,12 @@ void Menu_OnRotationCW(void)
 
 	case DMXCheckOnLCD_Entered:
 	case DMXCheckOnLCD_Update:
+	case DMXCheckOnLCD_SwitchedChannels:
 		if(dmxCheckOnLCD_Ch_1stColumn < 510)
 		{
-			if(turboRotationIsOn && (dmxCheckOnLCD_Ch_1stColumn < 501))
+			if(turboRotationIsOn && (dmxCheckOnLCD_Ch_1stColumn < 508))
 			{
-				dmxCheckOnLCD_Ch_1stColumn+=10;
+				dmxCheckOnLCD_Ch_1stColumn+=3;
 			}
 			else
 			{
@@ -735,11 +736,12 @@ void Menu_OnRotationCCW(void)
 
 	case DMXCheckOnLCD_Entered:
 	case DMXCheckOnLCD_Update:
+	case DMXCheckOnLCD_SwitchedChannels:
 		if(dmxCheckOnLCD_Ch_1stColumn > 1)
 		{
-			if(turboRotationIsOn && (dmxCheckOnLCD_Ch_1stColumn > 10))
+			if(turboRotationIsOn && (dmxCheckOnLCD_Ch_1stColumn > 3))
 			{
-				dmxCheckOnLCD_Ch_1stColumn-=10;
+				dmxCheckOnLCD_Ch_1stColumn-=3;
 			}
 			else
 			{

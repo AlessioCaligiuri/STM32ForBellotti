@@ -36,6 +36,7 @@ int encoderFlag_IsRotated;
  */
 int encoderFlag_RotationClockwise;
 
+int encoderRotation =  0;
 
 /**
  * @brief	This function is similar to HAL_Delay, but it can be interrupted
@@ -120,6 +121,9 @@ void UI_Init(void)
  */
 void UI_Update(void)
 {
+	int encoderRotCopy;
+	int i;
+
 	/* If encoder has been pressed */
 	if(encoderFlag_ButtonIsPressed)
 	{
@@ -132,17 +136,37 @@ void UI_Update(void)
 	if(encoderFlag_IsRotated)
 	{
 		encoderFlag_IsRotated = 0; //reset flag
-		/* Check direction on rotation */
-		if(encoderFlag_RotationClockwise)
+
+		encoderRotCopy = encoderRotation;
+		encoderRotation = 0;
+
+		if(encoderRotCopy > 0)
 		{
-			Menu_OnRotationCW();
-			Menu_Show();
+			for(i = 0; i<encoderRotCopy; i++)
+			{
+				Menu_OnRotationCW();
+			}
 		}
 		else
 		{
-			Menu_OnRotationCCW();
-			Menu_Show();
+			for(i = 0; i>encoderRotCopy; i--)
+			{
+				Menu_OnRotationCCW();
+			}
 		}
+		Menu_Show();
+
+//		/* Check direction on rotation */
+//		if(encoderFlag_RotationClockwise)
+//		{
+//			Menu_OnRotationCW();
+//			Menu_Show();
+//		}
+//		else
+//		{
+//			Menu_OnRotationCCW();
+//			Menu_Show();
+//		}
 	}
 }
 

@@ -35,6 +35,7 @@ extern int encoderFlag_IsRotated;
  */
 extern int encoderFlag_RotationClockwise;
 
+extern int encoderRotation;
 
 void UI_CreateEntries(void);
 void UI_Init(void);
