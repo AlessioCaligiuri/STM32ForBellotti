@@ -639,8 +639,8 @@ void Menu_OnRotationCW(void)
 			{
 				dmxCheckOnLCD_Ch_1stColumn++;
 			}
+			menuState = DMXCheckOnLCD_SwitchedChannels;
 		}
-		menuState = DMXCheckOnLCD_SwitchedChannels;
 		break;
 
 	case ConfirmRequested:
@@ -792,8 +792,8 @@ void Menu_OnRotationCCW(void)
 			{
 				dmxCheckOnLCD_Ch_1stColumn--;
 			}
+			menuState = DMXCheckOnLCD_SwitchedChannels;
 		}
-		menuState = DMXCheckOnLCD_SwitchedChannels;
 		break;
 
 	case ConfirmRequested:
