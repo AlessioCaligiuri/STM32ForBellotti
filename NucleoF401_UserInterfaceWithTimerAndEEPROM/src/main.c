@@ -48,14 +48,14 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-int dmxCh_redA = 1;
-int dmxCh_greenA = 2;
-int dmxCh_blueA = 3;
-int dmxCh_redB = 4;
-int dmxCh_greenB = 5;
-int dmxCh_blueB = 6;
-int fullOnIsActive = 0;
-int dmxThruModeIsActive = 1;
+uint16_t dmxCh_redA = 1;
+uint16_t dmxCh_greenA = 2;
+uint16_t dmxCh_blueA = 3;
+uint16_t dmxCh_redB = 4;
+uint16_t dmxCh_greenB = 5;
+uint16_t dmxCh_blueB = 6;
+uint8_t fullOnIsActive = 0;
+uint8_t dmxThruModeIsActive = 1;
 LightMode_t lightMode = LightMode_DMXControlled;
 
 /**
@@ -93,7 +93,7 @@ uint8_t light_blueB;
  */
 uint8_t dmx_Rx_Data[513];
 
-int dmxCheckViaSerial_isOn = 0;
+uint8_t dmxCheckViaSerial_isOn = 0;
 
 /* USER CODE END PV */
 

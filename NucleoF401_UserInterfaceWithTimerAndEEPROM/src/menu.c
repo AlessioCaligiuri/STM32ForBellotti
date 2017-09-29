@@ -36,13 +36,13 @@ int tempParam;
 /**
  * @brief True if a parameter has been modified without saving.
  */
-int menuParamIsModified = 0;
+uint8_t menuParamIsModified = 0;
 
 /**
  * @brief	Used in DMX Check on LCD to determine which channels have to be shown.
  * 			This variable specifies the first channel shown at left.
  */
-int dmxCheckOnLCD_Ch_1stColumn = 1;
+uint16_t dmxCheckOnLCD_Ch_1stColumn = 1;
 
 /**
  * @brief	Menu initialization.
@@ -123,13 +123,23 @@ void Menu_OnPression(void)
 		break;
 	case ParamModify_1_512:
 	case ParamModified_1_512:
+		if(tempParam != *((uint16_t*)(Menu_currentEntry->param)))
+				{
+					Menu_currentEntry->isModified = 1; //this menu entry parameter has been modified
+					menuParamIsModified = 1;		//some menu entry parameter has been modified
+					*((uint16_t*)(Menu_currentEntry->param)) = tempParam; //store the new value into the variable
+				}
+				menuState = NavigationUpdate;
+				LCD_CursorMode(Invisible_Cursor);
+				break;
+
 	case ParamModify_0_1:
 	case ParamModified_0_1:
-		if(tempParam != *((int*)(Menu_currentEntry->param)))
+		if(tempParam != *((uint8_t*)(Menu_currentEntry->param)))
 		{
 			Menu_currentEntry->isModified = 1; //this menu entry parameter has been modified
 			menuParamIsModified = 1;		//some menu entry parameter has been modified
-			*((int*)(Menu_currentEntry->param)) = tempParam; //store the new value into the variable
+			*((uint8_t*)(Menu_currentEntry->param)) = tempParam; //store the new value into the variable
 		}
 		menuState = NavigationUpdate;
 		LCD_CursorMode(Invisible_Cursor);
@@ -195,7 +205,7 @@ void Menu_ModifyParam_1_512(void)
 	if(Menu_currentEntry->param) //check if pointer is not equal to 0
 	{
 		menuState = ParamModify_1_512;
-		tempParam = *((int*)(Menu_currentEntry->param));
+		tempParam = *((uint16_t*)(Menu_currentEntry->param));
 	}
 }
 
@@ -225,7 +235,7 @@ void Menu_ModifyParam_0_1(void)
 	if(Menu_currentEntry->param) //check if pointer is not equal to 0
 	{
 		menuState = ParamModify_0_1;
-		tempParam = *((int*)(Menu_currentEntry->param));
+		tempParam = *((uint8_t*)(Menu_currentEntry->param));
 	}
 }
 

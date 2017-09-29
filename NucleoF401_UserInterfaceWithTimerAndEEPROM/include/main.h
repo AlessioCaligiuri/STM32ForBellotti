@@ -88,45 +88,45 @@ typedef enum {
 /**
  * @brief	Flag to indicate full on lights mode active.
  */
-extern int fullOnIsActive;
+extern uint8_t fullOnIsActive;
 
 /**
  * @brief	DMX receiving channel for red LED of A stripe.
  */
-extern int dmxCh_redA;
+extern uint16_t dmxCh_redA;
 
 /**
  * @brief	DMX receiving channel for green LED of A stripe.
  */
-extern int dmxCh_greenA;
+extern uint16_t dmxCh_greenA;
 
 /**
  * @brief	DMX receiving channel for blue LED of A stripe.
  */
-extern int dmxCh_blueA;
+extern uint16_t dmxCh_blueA;
 
 /**
  * @brief	DMX receiving channel for red LED of B stripe.
  */
-extern int dmxCh_redB;
+extern uint16_t dmxCh_redB;
 
 /**
  * @brief	DMX receiving channel for green LED of B stripe.
  */
-extern int dmxCh_greenB;
+extern uint16_t dmxCh_greenB;
 
 /**
  * @brief	DMX receiving channel for blue LED of B stripe.
  */
-extern int dmxCh_blueB;
+extern uint16_t dmxCh_blueB;
 
 /**
  * @brief	Light mode
  */
 extern LightMode_t lightMode;
 
-extern int dmxThruModeIsActive;
-
+extern uint8_t dmxThruModeIsActive;
+extern uint8_t dmxCheckViaSerial_isOn;
 extern uint8_t light_redA;
 extern uint8_t light_greenA;
 extern uint8_t light_blueA;
@@ -135,7 +135,6 @@ extern uint8_t light_greenB;
 extern uint8_t light_blueB;
 
 extern uint8_t dmx_Rx_Data[513];
-extern int dmxCheckViaSerial_isOn;
 
 /**
   * @}
