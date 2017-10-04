@@ -309,8 +309,8 @@ void MyMenu_CreateEntries(void)
 	mesL2_mem_load.previousEntry = &mesL2_mem_back;
 	mesL2_mem_load.nextEntry = &mesL2_mem_save;
 	mesL2_mem_load.upperLevelEntry = &mesL1_memory;
-	mesL2_mem_load.param = EEPROM_LoadFromMemory;
-	mesL2_mem_load.onPression = Menu_Confirm;
+	mesL2_mem_load.param = EEPROM_LoadFromMemory; //pointer to the "load" function
+	mesL2_mem_load.onPression = Menu_Confirm; //this entry choice needs to be confirmed
 
 	Menu_FillEntryWithZeros(&mesL2_mem_save);
 	strcpy(mesL2_mem_save.name,	   " Save settings  ");
@@ -318,8 +318,8 @@ void MyMenu_CreateEntries(void)
 	mesL2_mem_save.previousEntry = &mesL2_mem_load;
 	mesL2_mem_save.nextEntry = &mesL2_mem_restore;
 	mesL2_mem_save.upperLevelEntry = &mesL1_memory;
-	mesL2_mem_save.param = EEPROM_SaveToMemory;
-	mesL2_mem_save.onPression = Menu_Confirm;
+	mesL2_mem_save.param = EEPROM_SaveToMemory; //pointer to the "save" function
+	mesL2_mem_save.onPression = Menu_Confirm; //this entry choice needs to be confirmed
 
 	Menu_FillEntryWithZeros(&mesL2_mem_restore);
 	strcpy(mesL2_mem_restore.name,	   "Restore settings");
@@ -327,13 +327,13 @@ void MyMenu_CreateEntries(void)
 	mesL2_mem_restore.previousEntry = &mesL2_mem_save;
 	mesL2_mem_restore.nextEntry = &mesL2_mem_back;
 	mesL2_mem_restore.upperLevelEntry = &mesL1_memory;
-	mesL2_mem_restore.param = EEPROM_RestoreDefaultMemory;
-	mesL2_mem_restore.onPression = Menu_Confirm;
+	mesL2_mem_restore.param = EEPROM_RestoreDefaultMemory; //pointer to the "restore" function
+	mesL2_mem_restore.onPression = Menu_Confirm; //this entry choice needs to be confirmed
 
 	Menu_FillEntryWithZeros(&mesL2_mem_back);
 	strcpy(mesL2_mem_back.name,	   "  Back to main  ");
 	strcpy(mesL2_mem_back.surname, "      menu      ");
-	//mesL2_mem_back.previousEntry = &mesL2_mem_restore;
+	mesL2_mem_back.previousEntry = &mesL2_mem_restore;
 	mesL2_mem_back.nextEntry = &mesL2_mem_load;
 	mesL2_mem_back.upperLevelEntry = &mesL1_memory;
 	mesL2_mem_back.onPression = Menu_GoUpperLevel;

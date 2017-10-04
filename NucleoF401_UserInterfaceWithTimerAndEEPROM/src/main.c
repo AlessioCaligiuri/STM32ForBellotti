@@ -112,7 +112,6 @@ int timFlag_PeriodElapsed = 0;
 
 int main(void)
 {
-
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -129,6 +128,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
+
   //MX_TIM11_Init(); //non usato, per ora!
 
   /* USER CODE BEGIN 2 */
