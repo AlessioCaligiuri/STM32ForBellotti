@@ -102,6 +102,8 @@ void UI_Init(void)
 	HAL_GPIO_WritePin(LDO_GPIO_Port, LDO_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(LDB_GPIO_Port, LDB_Pin, GPIO_PIN_SET);
 	HAL_Delay_Breakable(5000);
+	HAL_GPIO_WritePin(LDO_GPIO_Port, LDO_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LDB_GPIO_Port, LDB_Pin, GPIO_PIN_SET);
 
 	/* Create entries */
 	MyMenu_CreateEntries();
@@ -181,5 +183,7 @@ void UI_Error(char* message)
 	/* Orange encoder LED ON */
 	HAL_GPIO_WritePin(LDB_GPIO_Port, LDB_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(LDO_GPIO_Port, LDO_Pin, GPIO_PIN_SET);
-
+	Wait_EncoderPressOrRotation();
+	HAL_GPIO_WritePin(LDB_GPIO_Port, LDB_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LDO_GPIO_Port, LDO_Pin, GPIO_PIN_RESET);
 }
