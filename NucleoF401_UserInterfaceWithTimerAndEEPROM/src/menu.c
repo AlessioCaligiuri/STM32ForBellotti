@@ -147,6 +147,7 @@ void Menu_OnPression(void)
 
 	case ParamModify_LightMode:
 	case ParamModified_LightMode:
+	case ParamNotModified_LightMode:
 		if(tempParam != *((LightMode_t*)((Menu_currentEntry->param))))
 		{
 			Menu_currentEntry->isModified = 1; //this menu entry parameter has been modified
