@@ -2,10 +2,17 @@
 #include "HD44780.h"
 #include "stm32f4xx_hal.h"
 #include "i2c.h"
+#include "userInterface.h"
 
 void LoadParam_1_512(uint8_t memAddress, uint16_t* paramPtr, char* errorMsg,
 		uint8_t* memErrorFlag);
-void SaveParam_1_511(uint8_t memAddress, uint16_t* paramPtr, char* errorMsg,
+void SaveParam_1_512(uint8_t memAddress, uint16_t* paramPtr, char* errorMsg,
+		uint8_t* memErrorFlag);
+void LoadParam_0_1(uint8_t memAddress, uint8_t* paramPtr, uint8_t* memErrorFlag);
+void SaveParam_0_1(uint8_t memAddress, uint8_t* paramPtr, uint8_t* memErrorFlag);
+void LoadParam_LightMode(uint8_t memAddress, LightMode_t* paramPtr, char* errorMsg,
+		uint8_t* memErrorFlag);
+void SaveParam_LightMode(uint8_t memAddress, LightMode_t* paramPtr, char* errorMsg,
 		uint8_t* memErrorFlag);
 
 
@@ -30,6 +37,12 @@ void EEPROM_LoadFromMemory()
 			" ERROR: invalid \ngreen B ch value", &somethingBadHappened);
 	LoadParam_1_512(EEPROM_LOCATION_CH_BLUE_B,&dmxCh_blueB,
 			" ERROR: invalid \nblue B ch value ", &somethingBadHappened);
+	LoadParam_0_1(EEPROM_LOCATION_DMX_THRU_MODE_ON_OFF,&dmxThruModeIsActive,
+			&somethingBadHappened);
+	LoadParam_LightMode(EEPROM_LOCATION_LIGHT_MODE_DMX_MANUAL,&lightMode,
+			" ERROR: invalid \nlight mode value",&somethingBadHappened);
+	LoadParam_0_1(EEPROM_LOCATION_DMX_CHECK_VIA_SERIAL_ON_OFF,&dmxCheckViaSerial_isOn,
+			&somethingBadHappened);
 
 	if(somethingBadHappened)
 	{
@@ -66,6 +79,12 @@ void EEPROM_SaveToMemory()
 			" ERROR: invalid \ngreen B ch value", &somethingBadHappened);
 	SaveParam_1_512(EEPROM_LOCATION_CH_BLUE_B,&dmxCh_blueB,
 			" ERROR: invalid \nblue B ch value ", &somethingBadHappened);
+	SaveParam_0_1(EEPROM_LOCATION_DMX_THRU_MODE_ON_OFF,&dmxThruModeIsActive,
+			&somethingBadHappened);
+	SaveParam_LightMode(EEPROM_LOCATION_LIGHT_MODE_DMX_MANUAL,&lightMode,
+			" ERROR: invalid \nlight mode value",&somethingBadHappened);
+	SaveParam_0_1(EEPROM_LOCATION_DMX_CHECK_VIA_SERIAL_ON_OFF,&dmxCheckViaSerial_isOn,
+			&somethingBadHappened);
 
 	if(somethingBadHappened)
 	{
@@ -97,7 +116,7 @@ void LoadParam_1_512(uint8_t memAddress, uint16_t* paramPtr, char* errorMsg,
 	HAL_StatusTypeDef halStatus;
 
 	halStatus = HAL_I2C_Mem_Read(&hi2c1, EEPROM_I2C_ADDRESS_FIRST_HALF,
-		memAddress, 1, (uint8_t*)&temp, sizeof(uint16_t), HAL_MAX_DELAY);
+		memAddress, 1, (uint8_t*)&temp, sizeof(uint16_t), EEPROM_READ_TIME);
 
 	if(halStatus != HAL_OK)
 	{
@@ -160,7 +179,7 @@ void SaveParam_1_512(uint8_t memAddress, uint16_t* paramPtr, char* errorMsg,
 	}
 
 	halStatus = HAL_I2C_Mem_Write(&hi2c1, EEPROM_I2C_ADDRESS_FIRST_HALF,
-		memAddress, 1, (uint8_t*)paramPtr, sizeof(uint16_t), HAL_MAX_DELAY);
+		memAddress, 1, (uint8_t*)paramPtr, sizeof(uint16_t), EEPROM_WRITE_TIME);
 
 	if(halStatus != HAL_OK)
 	{
@@ -190,3 +209,219 @@ void SaveParam_1_512(uint8_t memAddress, uint16_t* paramPtr, char* errorMsg,
 		return;
 	}
 }
+
+/**
+ * @brief	Used to load a boolean parameter (uint8_t type)
+ * @param	memAddress	Initial EEPROM location where to find data
+ * @param	paramPtr	Pointer to the RAM variable where to store data
+ * @param	memErrorFlag	Pointer to the I2C or EEPROM error flag
+ * 							(0 = no error)
+ */
+void LoadParam_0_1(uint8_t memAddress, uint8_t* paramPtr,
+		uint8_t* memErrorFlag)
+{
+	uint8_t temp;
+	HAL_StatusTypeDef halStatus;
+
+	halStatus = HAL_I2C_Mem_Read(&hi2c1, EEPROM_I2C_ADDRESS_FIRST_HALF,
+		memAddress, 1, (uint8_t*)&temp, sizeof(uint8_t), EEPROM_READ_TIME);
+
+	if(halStatus != HAL_OK)
+	{
+		*memErrorFlag = 1;
+		return;
+	}
+
+	/* DA RIVEDERE questi check: non è chiaro come funzioni la IsDeviceReady() */
+	uint32_t tickStart = HAL_GetTick();
+	while(1)
+	{
+		halStatus = HAL_I2C_IsDeviceReady(&hi2c1, EEPROM_I2C_ADDRESS_FIRST_HALF,
+					1, EEPROM_READ_TIME);
+		if(halStatus == HAL_OK)
+		{
+			break;
+		}
+		if(HAL_GetTick() - tickStart > EEPROM_READ_TIME)
+		{
+			break;
+		}
+	}
+
+	if(halStatus != HAL_OK)
+	{
+		*memErrorFlag = 1;
+		return;
+	}
+
+
+	*paramPtr = temp;
+
+}
+
+
+/**
+ * @brief	Used to save a boolean parameter (uint8_t type)
+ * @param	memAddress	Initial EEPROM location where to store data
+ * @param	paramPtr	Pointer to the RAM variable where to catch data
+ * @param	memErrorFlag	Pointer to the I2C or EEPROM error flag
+ * 							(0 = no error)
+ */
+void SaveParam_0_1(uint8_t memAddress, uint8_t* paramPtr,
+		uint8_t* memErrorFlag)
+{
+	HAL_StatusTypeDef halStatus;
+
+	halStatus = HAL_I2C_Mem_Write(&hi2c1, EEPROM_I2C_ADDRESS_FIRST_HALF,
+		memAddress, 1, (uint8_t*)paramPtr, sizeof(uint16_t), EEPROM_WRITE_TIME);
+
+	if(halStatus != HAL_OK)
+	{
+		*memErrorFlag = 1;
+		return;
+	}
+
+	/* DA RIVEDERE questi check: non è chiaro come funzioni la IsDeviceReady() */
+	uint32_t tickStart = HAL_GetTick();
+	while(1)
+	{
+		halStatus = HAL_I2C_IsDeviceReady(&hi2c1, EEPROM_I2C_ADDRESS_FIRST_HALF,
+					1, EEPROM_WRITE_TIME);
+		if(halStatus == HAL_OK)
+		{
+			break;
+		}
+		if(HAL_GetTick() - tickStart > EEPROM_WRITE_TIME)
+		{
+			break;
+		}
+	}
+
+	if(halStatus != HAL_OK)
+	{
+		*memErrorFlag = 1;
+		return;
+	}
+}
+
+
+/**
+ * @brief	Used to load a parameter of "lightMode" type
+ * @param	memAddress	Initial EEPROM location where to find data
+ * @param	paramPtr	Pointer to the RAM variable where to store data
+ * @param	errorMsg	String to write if an error occurs
+ * @param	memErrorFlag	Pointer to the I2C or EEPROM error flag
+ * 							(0 = no error)
+ */
+void LoadParam_LightMode(uint8_t memAddress, LightMode_t* paramPtr, char* errorMsg,
+		uint8_t* memErrorFlag)
+{
+	LightMode_t temp;
+	HAL_StatusTypeDef halStatus;
+
+	halStatus = HAL_I2C_Mem_Read(&hi2c1, EEPROM_I2C_ADDRESS_FIRST_HALF,
+		memAddress, 1, (uint8_t*)&temp, sizeof(LightMode_t), EEPROM_READ_TIME);
+
+	if(halStatus != HAL_OK)
+	{
+		*memErrorFlag = 1;
+		return;
+	}
+
+	/* DA RIVEDERE questi check: non è chiaro come funzioni la IsDeviceReady() */
+	uint32_t tickStart = HAL_GetTick();
+	while(1)
+	{
+		halStatus = HAL_I2C_IsDeviceReady(&hi2c1, EEPROM_I2C_ADDRESS_FIRST_HALF,
+					1, EEPROM_READ_TIME);
+		if(halStatus == HAL_OK)
+		{
+			break;
+		}
+		if(HAL_GetTick() - tickStart > EEPROM_READ_TIME)
+		{
+			break;
+		}
+	}
+
+	if(halStatus != HAL_OK)
+	{
+		*memErrorFlag = 1;
+		return;
+	}
+
+	switch(temp)
+	{
+	case LightMode_DMXControlled:
+	case LightMode_Manual:
+		*paramPtr = temp;
+		break;
+
+	default: //if the loaded value is not a known enum
+		UI_Error(errorMsg);
+		break;
+	}
+
+}
+
+
+/**
+ * @brief	Used to save a parameter of "lightMode" type
+ * @param	memAddress	Initial EEPROM location where to store data
+ * @param	paramPtr	Pointer to the RAM variable where to catch data
+ * @param	errorMsg	String to write if an error occurs
+ * @param	memErrorFlag	Pointer to the I2C or EEPROM error flag
+ * 							(0 = no error)
+ */
+void SaveParam_LightMode(uint8_t memAddress, LightMode_t* paramPtr, char* errorMsg,
+		uint8_t* memErrorFlag)
+{
+	LightMode_t temp = *paramPtr;
+	HAL_StatusTypeDef halStatus;
+
+	/* Check if the passed data is a known enum value */
+	switch(temp)
+	{
+	case LightMode_DMXControlled:
+	case LightMode_Manual:
+		break;
+	default:
+		UI_Error(errorMsg);
+		return;
+	}
+
+	halStatus = HAL_I2C_Mem_Write(&hi2c1, EEPROM_I2C_ADDRESS_FIRST_HALF,
+		memAddress, 1, (uint8_t*)paramPtr, sizeof(LightMode_t), EEPROM_WRITE_TIME);
+
+	if(halStatus != HAL_OK)
+	{
+		*memErrorFlag = 1;
+		return;
+	}
+
+	/* DA RIVEDERE questi check: non è chiaro come funzioni la IsDeviceReady() */
+	uint32_t tickStart = HAL_GetTick();
+	while(1)
+	{
+		halStatus = HAL_I2C_IsDeviceReady(&hi2c1, EEPROM_I2C_ADDRESS_FIRST_HALF,
+					1, EEPROM_WRITE_TIME);
+		if(halStatus == HAL_OK)
+		{
+			break;
+		}
+		if(HAL_GetTick() - tickStart > EEPROM_WRITE_TIME)
+		{
+			break;
+		}
+	}
+
+	if(halStatus != HAL_OK)
+	{
+		*memErrorFlag = 1;
+		return;
+	}
+}
+
+
+
+
