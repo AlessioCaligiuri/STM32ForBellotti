@@ -166,7 +166,6 @@ void UI_Message(char* message, uint32_t delay)
 	LCD_Clear_Display();
 	LCD_printf(message);
 	HAL_Delay_Breakable(delay);
-	Menu_Show();
 }
 
 /**

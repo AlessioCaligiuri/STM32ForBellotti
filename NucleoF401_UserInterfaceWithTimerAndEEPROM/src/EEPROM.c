@@ -13,6 +13,11 @@ void EEPROM_LoadFromMemory()
 {
 	uint8_t somethingBadHappened = 0;
 	/* Load DMX rx channels data */
+
+	HAL_I2C_Mem_Read(&hi2c1, EEPROM_I2C_ADDRESS_FIRST_HALF,
+			EEPROM_LOCATION_CH_RED_A, 1, (uint8_t*)&dmxCh_redA,
+			sizeof(uint16_t), HAL_MAX_DELAY);
+
 	LoadParam_1_512(EEPROM_LOCATION_CH_RED_A,&dmxCh_redA,
 			" ERROR: invalid \n red A ch value ", &somethingBadHappened);
 	LoadParam_1_512(EEPROM_LOCATION_CH_GREEN_A,&dmxCh_greenA,
@@ -40,8 +45,17 @@ void EEPROM_SaveToMemory()
 {
 	uint8_t somethingBadHappened = 0;
 	/* Save DMX rx channels data */
-	SaveParam_1_512(EEPROM_LOCATION_CH_RED_A,&dmxCh_redA,
-			" ERROR: invalid \n red A ch value ", &somethingBadHappened);
+//	SaveParam_1_512(EEPROM_LOCATION_CH_RED_A,&dmxCh_redA,
+//			" ERROR: invalid \n red A ch value ", &somethingBadHappened);
+
+	HAL_I2C_Mem_Write(&hi2c1, EEPROM_I2C_ADDRESS_FIRST_HALF,
+			EEPROM_LOCATION_CH_RED_A, 1, (uint8_t*)&dmxCh_redA,
+			sizeof(uint16_t), HAL_MAX_DELAY);
+
+
+	while(HAL_I2C_IsDeviceReady(&hi2c1, EEPROM_I2C_ADDRESS_FIRST_HALF,1, HAL_MAX_DELAY));
+
+
 	SaveParam_1_512(EEPROM_LOCATION_CH_GREEN_A,&dmxCh_greenA,
 			" ERROR: invalid \ngreen A ch value", &somethingBadHappened);
 	SaveParam_1_512(EEPROM_LOCATION_CH_BLUE_A,&dmxCh_blueA,
@@ -83,7 +97,7 @@ void LoadParam_1_512(uint8_t memAddress, uint16_t* paramPtr, char* errorMsg,
 	HAL_StatusTypeDef halStatus;
 
 	halStatus = HAL_I2C_Mem_Read(&hi2c1, EEPROM_I2C_ADDRESS_FIRST_HALF,
-		memAddress, 1, (uint8_t*)temp, sizeof(uint16_t), HAL_MAX_DELAY);
+		memAddress, 1, (uint8_t*)&temp, sizeof(uint16_t), HAL_MAX_DELAY);
 
 	if(halStatus != HAL_OK)
 	{
