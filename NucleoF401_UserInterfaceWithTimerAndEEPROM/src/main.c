@@ -223,6 +223,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
  */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
+	/* Commented because Ema hasn't got an encoder
 	if(GPIO_Pin == ENC_SW_Pin)
 	{
 		encoderFlag_ButtonIsPressed = 1;
@@ -238,6 +239,18 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			encoderRotationCount++;
 		}
 	}
+	*/
+
+	// Code added by Ema to manage three buttons for menu (substituting the encoder)
+
+	if(GPIO_Pin == GPIO_PIN_14)//PB14-B3
+		encoderFlag_ButtonIsPressed = 1;
+	else if(GPIO_Pin == GPIO_PIN_15)//PB15-B2
+		encoderRotationCount--;
+	else if(GPIO_Pin == GPIO_PIN_8)//PB8-B4
+		encoderRotationCount++;
+
+	// end added code
 }
 
 
