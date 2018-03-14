@@ -10,6 +10,8 @@ DMX_ModeTypeDef DMX_Mode;
 
 int16_t rxCounter = -1;
 
+uint8_t rxBuff[DMX_LENGTH];
+
 /**
  * Pointer to the instance of UART used for DMX.
  */

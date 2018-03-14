@@ -73,6 +73,10 @@
 #define LCD_D4_GPIO_Port GPIOB
 #define LCD_BL_Pin GPIO_PIN_6
 #define LCD_BL_GPIO_Port GPIOB
+#define DMX_OUT_Pin GPIO_PIN_11
+#define DMX_OUT_GPIO_Port GPIOA
+#define DMX_IN_Pin GPIO_PIN_12
+#define DMX_IN_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 extern int timFlag_PeriodElapsed;

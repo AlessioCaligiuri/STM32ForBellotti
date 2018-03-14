@@ -98,6 +98,21 @@ void USART2_IRQHandler(void)
 }
 
 /**
+* @brief This function handles USART6 global interrupt.
+*/
+void USART6_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART6_IRQn 0 */
+
+  /* USER CODE END USART6_IRQn 0 */
+	DMX_IRQHandler();
+  //HAL_UART_IRQHandler(&huart6);
+  /* USER CODE BEGIN USART6_IRQn 1 */
+
+  /* USER CODE END USART6_IRQn 1 */
+}
+
+/**
 * @brief This function handles EXTI line 0 interrupt.
 */
 void EXTI0_IRQHandler(void)

@@ -17,7 +17,7 @@ typedef enum {
 
 extern DMX_ModeTypeDef DMX_Mode;
 
-uint8_t rxBuff[DMX_LENGTH];
+extern uint8_t rxBuff[DMX_LENGTH];
 
 /**
  * @brief	DMX initialization function

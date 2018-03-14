@@ -126,23 +126,35 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART2_UART_Init();
+  MX_USART2_UART_Init(); //UART for PC (115200bps)
+  MX_USART6_UART_Init(); //UART for DMX (250kbps)
   MX_I2C1_Init();
 
   //MX_TIM11_Init(); //non usato, per ora!
 
   /* USER CODE BEGIN 2 */
 
+  //Initialize DMX
+  if (DMX_Init(&huart6) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
   UI_Init();
   /* USER CODE END 2 */
   DMX_Mode = DMX_MODE_DATA;
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  int i = 0;
   while (1)
   {
 	  UI_Update();
   /* USER CODE END WHILE */
+	  i = rxBuff[1];
+	  for(i = rxBuff[1]; i<255; i++)
+	  {
 
+	  }
   /* USER CODE BEGIN 3 */
 
   }
