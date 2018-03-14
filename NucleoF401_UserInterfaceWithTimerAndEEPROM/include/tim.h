@@ -56,6 +56,12 @@ extern void Error_Handler(void);
 
 void MX_TIM11_Init(void);
 
+//////0000000000
+extern TIM_HandleTypeDef htim3;
+void MX_TIM3_Init(void);
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+//////0000000000
+
 /* USER CODE BEGIN Prototypes */
 
 /* USER CODE END Prototypes */

@@ -133,6 +133,11 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 
+  /////////00000000
+  MX_TIM3_Init();
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+  /////////00000000
+
   UI_Init();
   /* USER CODE END 2 */
   DMX_Mode = DMX_MODE_DATA;
