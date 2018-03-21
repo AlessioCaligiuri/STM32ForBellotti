@@ -266,34 +266,16 @@ void Serial_SendDMXDataToPC(void)
 
 	HAL_UART_Transmit(&huart2, (uint8_t*)alignCursor, strlen(alignCursor), HAL_MAX_DELAY);
 	HAL_UART_Transmit(&huart2, (uint8_t*)initialClean, strlen(initialClean), HAL_MAX_DELAY);
-
-//	HAL_UART_Transmit_IT(&huart2, (uint8_t*)alignCursor, strlen(alignCursor));
-//	HAL_UART_Transmit_IT(&huart2, (uint8_t*)initialClean, strlen(initialClean));
-
-//	if(DMX_rxData_count < 0) //if no packet received
-//	{
-//		toSendDim = sprintf(toSend,"* No DMX packet received. DMX_Mode = %d *",
-//				DMX_Mode);
-//		HAL_UART_Transmit(&huart2, (uint8_t*)toSend, toSendDim, HAL_MAX_DELAY);
-//		//HAL_UART_Transmit_IT(&huart2, (uint8_t*)toSend, toSendDim);
-//	}
-//	else
+	/* Print start code */
+	toSendDim = sprintf(toSend,"Start code\t%d\r\n", DMX_rxData[0]);
+	HAL_UART_Transmit(&huart2, (uint8_t*)toSend, toSendDim, HAL_MAX_DELAY);
+	if(DMX_rxData_count > 0)
 	{
-		/* Print start code */
-		toSendDim = sprintf(toSend,"Start code\t%d\r\n", DMX_rxData[0]);
-		HAL_UART_Transmit(&huart2, (uint8_t*)toSend, toSendDim, HAL_MAX_DELAY);
-		//HAL_UART_Transmit_IT(&huart2, (uint8_t*)toSend, toSendDim);
-		//if(DMX_rxData_count > 0)
-		if(1)
+		/* Print channel values */
+		for(i = 1; i<=DMX_rxData_count; i++ )
 		{
-			/* Print channel values */
-			for(i = 1; i<=DMX_rxData_count; i++ )
-//			for(i = 1; i<=24; i++ )
-			{
-				  toSendDim = sprintf(toSend,"Channel %d\t%d\r\n",i,DMX_rxData[i]);
-				  HAL_UART_Transmit(&huart2, (uint8_t*)toSend, toSendDim, HAL_MAX_DELAY);
-				  //HAL_UART_Transmit_IT(&huart2, (uint8_t*)toSend, toSendDim);
-			}
+			  toSendDim = sprintf(toSend,"Channel %d\t%d\r\n",i,DMX_rxData[i]);
+			  HAL_UART_Transmit(&huart2, (uint8_t*)toSend, toSendDim, HAL_MAX_DELAY);
 		}
 	}
 }
@@ -326,6 +308,16 @@ void PWM_Update(void)
 			792, 800, 808, 816, 825, 833, 842, 851, 859, 868, 877, 886, 895,
 			904, 913, 923, 932, 941, 951, 961, 970, 980, 990, 999};
 
+	if(fullOnIsActive)
+	{
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 255);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 255);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 255);
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, 255);
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, 255);
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 255);
+		return;
+	}
 
 	switch(lightMode)
 	{

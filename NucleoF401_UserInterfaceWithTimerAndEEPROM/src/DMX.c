@@ -19,7 +19,7 @@ int16_t rxCounter = -1;
  * @note	At position 0, there is the start code (always 0).
  * 			Then, CH1 ---> index 1 and so on.
  */
-uint8_t DMX_rxData[DMX_LENGTH];
+uint8_t DMX_rxData[DMX_LENGTH] = {0};
 
 /**
  * @brief	Counter of valid values in \ref DMX_rxData
