@@ -77,6 +77,12 @@
 #define DMX_OUT_GPIO_Port GPIOA
 #define DMX_IN_Pin GPIO_PIN_12
 #define DMX_IN_GPIO_Port GPIOA
+//#define TMS_Pin GPIO_PIN_13
+//#define TMS_GPIO_Port GPIOA
+//#define TCK_Pin GPIO_PIN_14
+//#define TCK_GPIO_Port GPIOA
+//#define SWO_Pin GPIO_PIN_3
+//#define SWO_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 extern int timFlag_PeriodElapsed;
@@ -137,8 +143,6 @@ extern uint8_t light_blueA;
 extern uint8_t light_redB;
 extern uint8_t light_greenB;
 extern uint8_t light_blueB;
-
-extern uint8_t dmx_Rx_Data[513];
 
 /**
   * @}

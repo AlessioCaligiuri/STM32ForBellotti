@@ -397,16 +397,16 @@ void Menu_Show(void)
 			LCD_2ndRow();
 			LCD_printf("Val.");
 			LCD_Locate(2,6);
-			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn]);
+			LCD_printf("%d",DMX_rxData[dmxCheckOnLCD_Ch_1stColumn]);
 			LCD_Locate(2,10);
-			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn + 1]);
+			LCD_printf("%d",DMX_rxData[dmxCheckOnLCD_Ch_1stColumn + 1]);
 			LCD_Locate(2,14);
-			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn + 2]);
+			LCD_printf("%d",DMX_rxData[dmxCheckOnLCD_Ch_1stColumn + 2]);
 			break;
 		case DMX_MODE_UNKNOWN_SC:
 			LCD_printf("Unknown start");
 			LCD_2ndRow();
-			LCD_printf("code: %d",dmx_Rx_Data[0]);
+			LCD_printf("code: %d",DMX_rxData[0]);
 			break;
 		case DMX_MODE_ERROR:
 			LCD_printf("   DMX Error!   ");
@@ -429,17 +429,17 @@ void Menu_Show(void)
 			LCD_Locate(2,6);
 			LCD_printf("           ");
 			LCD_Locate(2,6);
-			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn]);
+			LCD_printf("%d",DMX_rxData[dmxCheckOnLCD_Ch_1stColumn]);
 			LCD_Locate(2,10);
-			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn + 1]);
+			LCD_printf("%d",DMX_rxData[dmxCheckOnLCD_Ch_1stColumn + 1]);
 			LCD_Locate(2,14);
-			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn + 2]);
+			LCD_printf("%d",DMX_rxData[dmxCheckOnLCD_Ch_1stColumn + 2]);
 			break;
 		case DMX_MODE_UNKNOWN_SC:
 			LCD_Clear_Display();
 			LCD_printf("Unknown start");
 			LCD_2ndRow();
-			LCD_printf("code: %d",dmx_Rx_Data[0]);
+			LCD_printf("code: %d",DMX_rxData[0]);
 			break;
 		case DMX_MODE_ERROR:
 			LCD_Clear_Display();
@@ -471,17 +471,17 @@ void Menu_Show(void)
 			LCD_Locate(2,6);
 			LCD_printf("           ");
 			LCD_Locate(2,6);
-			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn]);
+			LCD_printf("%d",DMX_rxData[dmxCheckOnLCD_Ch_1stColumn]);
 			LCD_Locate(2,10);
-			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn + 1]);
+			LCD_printf("%d",DMX_rxData[dmxCheckOnLCD_Ch_1stColumn + 1]);
 			LCD_Locate(2,14);
-			LCD_printf("%d",dmx_Rx_Data[dmxCheckOnLCD_Ch_1stColumn + 2]);
+			LCD_printf("%d",DMX_rxData[dmxCheckOnLCD_Ch_1stColumn + 2]);
 			break;
 		case DMX_MODE_UNKNOWN_SC:
 			LCD_Clear_Display();
 			LCD_printf("Unknown start");
 			LCD_2ndRow();
-			LCD_printf("code: %d",dmx_Rx_Data[0]);
+			LCD_printf("code: %d",DMX_rxData[0]);
 			break;
 		case DMX_MODE_ERROR:
 			LCD_Clear_Display();

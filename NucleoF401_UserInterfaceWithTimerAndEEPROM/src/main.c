@@ -39,6 +39,7 @@
 #include "usart.h"
 #include "gpio.h"
 #include "DMX.h"
+#include <string.h>
 
 /* USER CODE BEGIN Includes */
 #include "userInterface.h"
@@ -88,12 +89,9 @@ uint8_t light_greenB;
  */
 uint8_t light_blueB;
 
-/**
- * @brief	DMX received data. The position 0 is the Start Code.
- */
-uint8_t dmx_Rx_Data[513];
-
 uint8_t dmxCheckViaSerial_isOn = 0;
+
+int timerCounterDMX = 0;
 
 /* USER CODE END PV */
 
@@ -102,6 +100,8 @@ void SystemClock_Config(void);
 void Error_Handler(void);
 
 /* USER CODE BEGIN PFP */
+void Serial_SendDMXDataToPC(void);
+void PWM_Update(void);
 /* Private function prototypes -----------------------------------------------*/
 
 /* USER CODE END PFP */
@@ -112,53 +112,62 @@ int timFlag_PeriodElapsed = 0;
 
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
+	/* USER CODE BEGIN 1 */
 
-  /* USER CODE END 1 */
+	/* USER CODE END 1 */
 
-  /* MCU Configuration----------------------------------------------------------*/
+	/* MCU Configuration----------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	HAL_Init();
 
-  /* Configure the system clock */
-  SystemClock_Config();
+	/* Configure the system clock */
+	SystemClock_Config();
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_USART2_UART_Init(); //UART for PC (115200bps)
-  MX_USART6_UART_Init(); //UART for DMX (250kbps)
-  MX_I2C1_Init();
+	/* Initialize all configured peripherals */
+	MX_GPIO_Init();
+	MX_USART2_UART_Init(); //UART for PC (115200bps)
+	MX_USART6_UART_Init(); //UART for DMX (250kbps)
+	MX_I2C1_Init();
+	MX_TIM3_Init();
+	MX_TIM1_Init();
+	MX_TIM10_Init();
 
-  //MX_TIM11_Init(); //non usato, per ora!
+	/* USER CODE BEGIN 2 */
 
-  /* USER CODE BEGIN 2 */
+	/* Initialize DMX */
+	if (DMX_Init(&huart6) != HAL_OK)
+	{
+	Error_Handler();
+	}
 
-  //Initialize DMX
-  if (DMX_Init(&huart6) != HAL_OK)
-  {
-    Error_Handler();
-  }
+	/* Initialize User Interface */
+	UI_Init();
 
-  UI_Init();
-  /* USER CODE END 2 */
-  DMX_Mode = DMX_MODE_DATA;
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  int i = 0;
-  while (1)
-  {
+	/* START PWMs TIMERS */
+	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
+	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
+//
+//	/* Start Timer 10, used for PWM update, serial to PC and DMX timeout */
+//	HAL_TIM_Base_Start_IT(&htim10);
+
+	/* USER CODE END 2 */
+
+	/* Infinite loop */
+	/* USER CODE BEGIN WHILE */
+	while (1)
+	{
 	  UI_Update();
-  /* USER CODE END WHILE */
-	  i = rxBuff[1];
-	  for(i = rxBuff[1]; i<255; i++)
-	  {
+	  PWM_Update();
+	/* USER CODE END WHILE */
+	/* USER CODE BEGIN 3 */
 
-	  }
-  /* USER CODE BEGIN 3 */
-
-  }
-  /* USER CODE END 3 */
+	}
+	/* USER CODE END 3 */
 
 }
 
@@ -221,15 +230,6 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 /**
- * @brief	ISR for TIM11.
- */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-	if(htim->Instance == TIM11)
-		  timFlag_PeriodElapsed = 1;
-}
-
-/**
  * @brief 	ISR for GPIO interrupt.
  * 			Set encoder flags.
  */
@@ -252,6 +252,147 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 }
 
+/**
+ * @brief	Sends DMX received values to PC over serial (115200 baud).
+ */
+void Serial_SendDMXDataToPC(void)
+{
+	const char alignCursor[] = "\033[0;0H";
+	const char initialClean[] = "\033[2J";
+	int i = 0;
+	char toSend[60];
+	uint16_t toSendDim;
+
+	/* Clear terminal */
+	HAL_UART_Transmit(&huart2, (uint8_t*)alignCursor, strlen(alignCursor), HAL_MAX_DELAY);
+	HAL_UART_Transmit(&huart2, (uint8_t*)initialClean, strlen(initialClean), HAL_MAX_DELAY);
+
+	if(DMX_rxData_count < 0) //if no packet received
+	{
+		toSendDim = sprintf(toSend,"* No DMX packet received. DMX_Mode = %d *",
+				DMX_Mode);
+		HAL_UART_Transmit(&huart2, (uint8_t*)toSend, toSendDim, HAL_MAX_DELAY);
+	}
+	else
+	{
+		/* Print start code */
+		toSendDim = sprintf(toSend,"Start code\t%d\r\n", DMX_rxData[0]);
+		HAL_UART_Transmit(&huart2, (uint8_t*)toSend, toSendDim, HAL_MAX_DELAY);
+		if(DMX_rxData_count > 0)
+		{
+			/* Print channel values */
+			for(i = 1; i<=DMX_rxData_count; i++ )
+			{
+				  toSendDim = sprintf(toSend,"Channel %d\t%d\r\n",i,DMX_rxData[i]);
+				  HAL_UART_Transmit(&huart2, (uint8_t*)toSend, toSendDim, HAL_MAX_DELAY);
+			}
+		}
+	}
+}
+
+/**
+ * @brief	Updates PWMs values, linearizing human light perception.
+ * On the basis of chosen light mode, uses DMX values or "manual light" values.
+ */
+void PWM_Update(void)
+{
+	/* LUT for DMX to PWM exponential conversion, in order to linearize human
+	 * light perception */
+	const uint16_t dmxToPwm[256]= {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13,
+			14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 26, 27, 28, 29, 31, 32,
+			33, 35, 36, 37, 39, 40, 41, 43, 44, 45, 47, 48, 50, 51, 53, 54,
+			56, 57, 59, 60, 62, 63, 65, 67, 68, 70, 71, 73, 75, 76, 78, 80,
+			82, 83, 85, 87, 89, 91, 92, 94, 96, 98, 100, 102, 104, 106, 108,
+			110, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130, 133, 135,
+			137, 139, 142, 144, 146, 149, 151, 153, 156, 158, 161, 163, 165,
+			168, 171, 173, 176, 178, 181, 184, 186, 189, 192, 194, 197, 200,
+			203, 206, 208, 211, 214, 217, 220, 223, 226, 229, 232, 236, 239,
+	        242, 245, 248, 252, 255, 258, 261, 265, 268, 272, 275, 279, 282,
+			286, 289, 293, 297, 300, 304, 308, 312, 316, 319, 323, 327, 331,
+			335, 339, 343, 347, 352, 356, 360, 364, 369, 373, 377, 382, 386,
+			391, 395, 400, 405, 409, 414, 419, 424, 428, 433, 438, 443, 448,
+			453, 458, 464, 469, 474, 479, 485, 490, 496, 501, 507, 512, 518,
+			524, 529, 535, 541, 547, 553, 559, 565, 571, 577, 584, 590, 596,
+			603, 609, 616, 622, 629, 636, 642, 649, 656, 663, 670, 677, 684,
+			692, 699, 706, 714, 721, 729, 736, 744, 752, 760, 768, 775, 784,
+			792, 800, 808, 816, 825, 833, 842, 851, 859, 868, 877, 886, 895,
+			904, 913, 923, 932, 941, 951, 961, 970, 980, 990, 999};
+
+
+	switch(lightMode)
+	{
+	case LightMode_DMXControlled:
+		if(DMX_rxData_count > 0)
+		{
+			/* Copy data from DMX to PWMs */
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, dmxToPwm[DMX_rxData[dmxCh_redA]]);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, dmxToPwm[DMX_rxData[dmxCh_greenA]]);
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, dmxToPwm[DMX_rxData[dmxCh_blueA]]);
+			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, dmxToPwm[DMX_rxData[dmxCh_redB]]);
+			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, dmxToPwm[DMX_rxData[dmxCh_greenB]]);
+			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, dmxToPwm[DMX_rxData[dmxCh_blueB]]);
+		}
+		break;
+	case LightMode_Manual:
+		/* Copy data from manual lights to PWMs */
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, dmxToPwm[light_redA]);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, dmxToPwm[light_greenA]);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, dmxToPwm[light_blueA]);
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, dmxToPwm[light_redB]);
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, dmxToPwm[light_greenB]);
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, dmxToPwm[light_blueB]);
+
+		break;
+	default:
+		break;
+	}
+}
+
+/**
+ * @brief	Called when a timer expires.
+ * For TIM10 (20ms period), update PWMs, increment the DMX timeout counter,
+ * transmit DMX data to PC over serial every 1s.
+ */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	static int timerCounterSerial = 0; //counter for serial PC transmission timing
+
+	if(htim->Instance == TIM10) //20ms Timer
+	{
+		PWM_Update();
+
+		/* DMX Timeout */
+		if(DMX_Mode != DMX_MODE_INIT)
+		{
+			timerCounterDMX++;
+			if(timerCounterDMX >= 50) //1s elapsed: reset DMX state
+			{
+				DMX_Mode = DMX_MODE_INIT;
+				DMX_rxData_count = -1;
+				timerCounterDMX = 0;
+			}
+		}
+
+		/* Periodic send of DMX data to PC over serial */
+		if(dmxCheckViaSerial_isOn)
+		{
+			timerCounterSerial++;
+			if(timerCounterSerial >= 5) //100ms elapsed
+			{
+				Serial_SendDMXDataToPC();
+				timerCounterSerial = 0;
+			}
+		}
+	}
+}
+
+/**
+ * @brief	Resets DMX timeout timer.
+ */
+void DMX_ResetTimer(void)
+{
+	timerCounterDMX = 0;
+}
 
 /* USER CODE END 4 */
 

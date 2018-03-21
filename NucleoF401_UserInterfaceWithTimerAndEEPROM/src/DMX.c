@@ -1,6 +1,6 @@
 #include "stm32f4xx_hal.h"
 #include "DMX.h"
-
+#include <string.h>
 
 
 /**
@@ -8,9 +8,30 @@
  */
 DMX_ModeTypeDef DMX_Mode;
 
+/**
+ * @brief	Internal counter for received bytes.
+ * @note	If -1, no byte has been received or errors occurred.
+ */
 int16_t rxCounter = -1;
 
+/**
+ * @brief	Temporary buffer for received bytes.
+ * @note	Filled if DMX_MODE_DATA.
+ */
 uint8_t rxBuff[DMX_LENGTH];
+
+/**
+ * @brief	Last valid received data.
+ * @note	At position 0, there is the start code (always 0).
+ * 			Then, CH1 ---> index 1 and so on.
+ * @warning	Data is valid if and only if \ref DMX_rxData_count is > 0.
+ */
+uint8_t DMX_rxData[DMX_LENGTH];
+
+/**
+ * @brief	Counter of valid values in \ref DMX_rxData
+ */
+int16_t DMX_rxData_count = -1;
 
 /**
  * Pointer to the instance of UART used for DMX.
@@ -74,9 +95,19 @@ void DMX_IRQHandler(void)
 	/* If break detected */
 	if(((isrflags & USART_SR_LBD) != RESET) && ((cr2its & USART_CR2_LBDIE) != RESET))
 	{
-		DMX_Mode = DMX_MODE_BREAK;
+		/* Update global array and counter if the previous state was
+		 * DMX_MODE_DATA, i.e. if we was receiving.
+		 */
+		if(DMX_Mode == DMX_MODE_DATA)
+		{
+			//Update global variables seen from outside
+			memcpy(DMX_rxData,rxBuff,rxCounter);
+			DMX_rxData_count = rxCounter;
+		}
 		CLEAR_BIT(DMX_huart_ptr->Instance->SR, USART_SR_LBD); //reset LBD flag
 		rxCounter = 0; //reset data counter
+		DMX_ResetTimer();
+		DMX_Mode = DMX_MODE_BREAK;
 		return;
 	}
 
@@ -103,6 +134,8 @@ void DMX_IRQHandler(void)
 		else
 		{
 			DMX_Mode = DMX_MODE_UNKNOWN_SC;
+			rxCounter = 0;
+			DMX_rxData[0] = rxByte;
 		}
 		break;
 	case DMX_MODE_DATA:
