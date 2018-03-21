@@ -146,7 +146,59 @@ void EEPROM_SaveToMemory()
  */
 void EEPROM_RestoreDefaultMemory()
 {
-	UI_Message("Not done!",500);
+//	uint8_t somethingBadHappened = 0;
+//
+//	//Wait for the I2C memory to be ready (max EEPROM_TRIALS * EEPROM_TIMEOUT_MS)
+//	if(HAL_I2C_IsDeviceReady(&hi2c1, EEPROM_I2C_ADDRESS_FIRST_HALF,EEPROM_TRIALS, EEPROM_TIMEOUT_MS))
+//	{
+//		UI_Error(" I2C or EEPROM  \n     ERROR!     ");
+//		return;
+//	}
+//
+//	/* Save DMX rx channels data */
+//	SaveParam_1_512(EEPROM_LOCATION_CH_RED_A,&dmxCh_redA,
+//			" ERROR: invalid \n red A ch value ", &somethingBadHappened);
+//	SaveParam_1_512(EEPROM_LOCATION_CH_GREEN_A,&dmxCh_greenA,
+//			" ERROR: invalid \ngreen A ch value", &somethingBadHappened);
+//	SaveParam_1_512(EEPROM_LOCATION_CH_BLUE_A,&dmxCh_blueA,
+//			" ERROR: invalid \nblue A ch value ", &somethingBadHappened);
+//	SaveParam_1_512(EEPROM_LOCATION_CH_RED_B,&dmxCh_redB,
+//			" ERROR: invalid \n red B ch value ", &somethingBadHappened);
+//	SaveParam_1_512(EEPROM_LOCATION_CH_GREEN_B,&dmxCh_greenB,
+//			" ERROR: invalid \ngreen B ch value", &somethingBadHappened);
+//	SaveParam_1_512(EEPROM_LOCATION_CH_BLUE_B,&dmxCh_blueB,
+//			" ERROR: invalid \nblue B ch value ", &somethingBadHappened);
+//
+//	/* Options data */
+//	SaveParam_0_1(EEPROM_LOCATION_DMX_THRU_MODE_ON_OFF,&dmxThruModeIsActive,
+//			&somethingBadHappened);
+//	SaveParam_LightMode(EEPROM_LOCATION_LIGHT_MODE_DMX_MANUAL,&lightMode,
+//			" ERROR: invalid \nlight mode value",&somethingBadHappened);
+//	SaveParam_0_1(EEPROM_LOCATION_DMX_CHECK_VIA_SERIAL_ON_OFF,&dmxCheckViaSerial_isOn,
+//			&somethingBadHappened);
+//
+//	/* Light in manual mode data */
+//	SaveParam_0_255(EEPROM_LOCATION_LIGHT_RED_A,&light_redA,
+//			&somethingBadHappened);
+//	SaveParam_0_255(EEPROM_LOCATION_LIGHT_GREEN_A,&light_greenA,
+//			&somethingBadHappened);
+//	SaveParam_0_255(EEPROM_LOCATION_LIGHT_BLUE_A,&light_blueA,
+//			&somethingBadHappened);
+//	SaveParam_0_255(EEPROM_LOCATION_LIGHT_RED_B,&light_redB,
+//			&somethingBadHappened);
+//	SaveParam_0_255(EEPROM_LOCATION_LIGHT_GREEN_B,&light_greenB,
+//			&somethingBadHappened);
+//	SaveParam_0_255(EEPROM_LOCATION_LIGHT_BLUE_B,&light_blueB,
+//			&somethingBadHappened);
+//
+//	if(somethingBadHappened)
+//	{
+//		UI_Error(" I2C or EEPROM  \n     ERROR!     ");
+//	}
+//	else
+//	{
+//		UI_Message("Save completed!",500);
+//	}
 }
 
 /**
