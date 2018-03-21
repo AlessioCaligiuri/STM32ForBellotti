@@ -141,9 +141,6 @@ int main(void)
 	Error_Handler();
 	}
 
-	/* Initialize User Interface */
-	UI_Init();
-
 	/* START PWMs TIMERS */
 	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
 	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
@@ -154,6 +151,9 @@ int main(void)
 
 	/* Start Timer 10, used for PWM update, serial to PC and DMX timeout */
 	HAL_TIM_Base_Start_IT(&htim10);
+
+	/* Initialize User Interface */
+	UI_Init();
 
 	/* USER CODE END 2 */
 
@@ -287,8 +287,8 @@ void Serial_SendDMXDataToPC(void)
 		if(1)
 		{
 			/* Print channel values */
-//			for(i = 1; i<=DMX_rxData_count; i++ )
-			for(i = 1; i<=24; i++ )
+			for(i = 1; i<=DMX_rxData_count; i++ )
+//			for(i = 1; i<=24; i++ )
 			{
 				  toSendDim = sprintf(toSend,"Channel %d\t%d\r\n",i,DMX_rxData[i]);
 				  HAL_UART_Transmit(&huart2, (uint8_t*)toSend, toSendDim, HAL_MAX_DELAY);
@@ -371,8 +371,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			timerCounterDMX++;
 			if(timerCounterDMX >= 50) //1s elapsed: reset DMX state
 			{
-				DMX_Mode = DMX_MODE_INIT;
 				DMX_rxData_count = -1;
+				DMX_Mode = DMX_MODE_INIT;
 				timerCounterDMX = 0;
 			}
 		}

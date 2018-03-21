@@ -387,7 +387,7 @@ void Menu_Show(void)
 		{
 		case DMX_MODE_DATA:
 		case DMX_MODE_BREAK:
-			LCD_printf("Ch.");
+			LCD_printf("Ch.    ");
 			LCD_Locate(1,6);
 			LCD_printf("%d",dmxCheckOnLCD_Ch_1stColumn);
 			LCD_Locate(1,10);
@@ -408,9 +408,9 @@ void Menu_Show(void)
 			LCD_2ndRow();
 			LCD_printf("code: %d",DMX_rxData[0]);
 			break;
-		case DMX_MODE_ERROR:
-			LCD_printf("   DMX Error!   ");
-			break;
+//		case DMX_MODE_ERROR:
+//			LCD_printf("   DMX Error!   ");
+//			break;
 		case DMX_MODE_INIT:
 			LCD_printf("DMX Initialized ");
 			break;
@@ -441,10 +441,10 @@ void Menu_Show(void)
 			LCD_2ndRow();
 			LCD_printf("code: %d",DMX_rxData[0]);
 			break;
-		case DMX_MODE_ERROR:
-			LCD_Clear_Display();
-			LCD_printf("   DMX Error!   ");
-			break;
+//		case DMX_MODE_ERROR:
+//			LCD_Clear_Display();
+//			LCD_printf("   DMX Error!   ");
+//			break;
 		case DMX_MODE_INIT:
 			LCD_Clear_Display();
 			LCD_printf("DMX Initialized ");
@@ -460,6 +460,8 @@ void Menu_Show(void)
 		{
 		case DMX_MODE_DATA:
 		case DMX_MODE_BREAK:
+			LCD_Locate(1,1);
+			LCD_printf("Ch.  ");
 			LCD_Locate(1,6);
 			LCD_printf("           ");
 			LCD_Locate(1,6);
@@ -468,6 +470,8 @@ void Menu_Show(void)
 			LCD_printf("%d",dmxCheckOnLCD_Ch_1stColumn+1);
 			LCD_Locate(1,14);
 			LCD_printf("%d",dmxCheckOnLCD_Ch_1stColumn+2);
+			LCD_2ndRow();
+			LCD_printf("Val.");
 			LCD_Locate(2,6);
 			LCD_printf("           ");
 			LCD_Locate(2,6);
@@ -483,10 +487,10 @@ void Menu_Show(void)
 			LCD_2ndRow();
 			LCD_printf("code: %d",DMX_rxData[0]);
 			break;
-		case DMX_MODE_ERROR:
-			LCD_Clear_Display();
-			LCD_printf("   DMX Error!   ");
-			break;
+//		case DMX_MODE_ERROR:
+//			LCD_Clear_Display();
+//			LCD_printf("   DMX Error!   ");
+//			break;
 		case DMX_MODE_INIT:
 			LCD_Clear_Display();
 			LCD_printf("DMX Initialized ");
