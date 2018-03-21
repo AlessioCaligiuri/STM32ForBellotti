@@ -151,9 +151,9 @@ int main(void)
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
-//
-//	/* Start Timer 10, used for PWM update, serial to PC and DMX timeout */
-//	HAL_TIM_Base_Start_IT(&htim10);
+
+	/* Start Timer 10, used for PWM update, serial to PC and DMX timeout */
+	HAL_TIM_Base_Start_IT(&htim10);
 
 	/* USER CODE END 2 */
 
@@ -162,7 +162,6 @@ int main(void)
 	while (1)
 	{
 	  UI_Update();
-	  PWM_Update();
 	/* USER CODE END WHILE */
 	/* USER CODE BEGIN 3 */
 
@@ -264,27 +263,36 @@ void Serial_SendDMXDataToPC(void)
 	uint16_t toSendDim;
 
 	/* Clear terminal */
+
 	HAL_UART_Transmit(&huart2, (uint8_t*)alignCursor, strlen(alignCursor), HAL_MAX_DELAY);
 	HAL_UART_Transmit(&huart2, (uint8_t*)initialClean, strlen(initialClean), HAL_MAX_DELAY);
 
-	if(DMX_rxData_count < 0) //if no packet received
-	{
-		toSendDim = sprintf(toSend,"* No DMX packet received. DMX_Mode = %d *",
-				DMX_Mode);
-		HAL_UART_Transmit(&huart2, (uint8_t*)toSend, toSendDim, HAL_MAX_DELAY);
-	}
-	else
+//	HAL_UART_Transmit_IT(&huart2, (uint8_t*)alignCursor, strlen(alignCursor));
+//	HAL_UART_Transmit_IT(&huart2, (uint8_t*)initialClean, strlen(initialClean));
+
+//	if(DMX_rxData_count < 0) //if no packet received
+//	{
+//		toSendDim = sprintf(toSend,"* No DMX packet received. DMX_Mode = %d *",
+//				DMX_Mode);
+//		HAL_UART_Transmit(&huart2, (uint8_t*)toSend, toSendDim, HAL_MAX_DELAY);
+//		//HAL_UART_Transmit_IT(&huart2, (uint8_t*)toSend, toSendDim);
+//	}
+//	else
 	{
 		/* Print start code */
 		toSendDim = sprintf(toSend,"Start code\t%d\r\n", DMX_rxData[0]);
 		HAL_UART_Transmit(&huart2, (uint8_t*)toSend, toSendDim, HAL_MAX_DELAY);
-		if(DMX_rxData_count > 0)
+		//HAL_UART_Transmit_IT(&huart2, (uint8_t*)toSend, toSendDim);
+		//if(DMX_rxData_count > 0)
+		if(1)
 		{
 			/* Print channel values */
-			for(i = 1; i<=DMX_rxData_count; i++ )
+//			for(i = 1; i<=DMX_rxData_count; i++ )
+			for(i = 1; i<=24; i++ )
 			{
 				  toSendDim = sprintf(toSend,"Channel %d\t%d\r\n",i,DMX_rxData[i]);
 				  HAL_UART_Transmit(&huart2, (uint8_t*)toSend, toSendDim, HAL_MAX_DELAY);
+				  //HAL_UART_Transmit_IT(&huart2, (uint8_t*)toSend, toSendDim);
 			}
 		}
 	}
@@ -322,16 +330,13 @@ void PWM_Update(void)
 	switch(lightMode)
 	{
 	case LightMode_DMXControlled:
-		if(DMX_rxData_count > 0)
-		{
-			/* Copy data from DMX to PWMs */
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, dmxToPwm[DMX_rxData[dmxCh_redA]]);
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, dmxToPwm[DMX_rxData[dmxCh_greenA]]);
-			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, dmxToPwm[DMX_rxData[dmxCh_blueA]]);
-			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, dmxToPwm[DMX_rxData[dmxCh_redB]]);
-			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, dmxToPwm[DMX_rxData[dmxCh_greenB]]);
-			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, dmxToPwm[DMX_rxData[dmxCh_blueB]]);
-		}
+		/* Copy data from DMX to PWMs */
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, dmxToPwm[DMX_rxData[dmxCh_redA]]);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, dmxToPwm[DMX_rxData[dmxCh_greenA]]);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, dmxToPwm[DMX_rxData[dmxCh_blueA]]);
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, dmxToPwm[DMX_rxData[dmxCh_redB]]);
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, dmxToPwm[DMX_rxData[dmxCh_greenB]]);
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, dmxToPwm[DMX_rxData[dmxCh_blueB]]);
 		break;
 	case LightMode_Manual:
 		/* Copy data from manual lights to PWMs */
@@ -341,7 +346,6 @@ void PWM_Update(void)
 		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, dmxToPwm[light_redB]);
 		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, dmxToPwm[light_greenB]);
 		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, dmxToPwm[light_blueB]);
-
 		break;
 	default:
 		break;
@@ -380,6 +384,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			if(timerCounterSerial >= 5) //100ms elapsed
 			{
 				Serial_SendDMXDataToPC();
+				//HAL_Delay(10);
 				timerCounterSerial = 0;
 			}
 		}

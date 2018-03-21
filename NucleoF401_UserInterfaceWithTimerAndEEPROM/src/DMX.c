@@ -56,7 +56,7 @@ HAL_StatusTypeDef DMX_Init(UART_HandleTypeDef *huart)
 	//reset rx buffer
 	for(i=0; i < DMX_LENGTH; i++)
 	{
-		rxBuff[DMX_LENGTH] = 0;
+		DMX_rxData[i] = 0;
 	}
 
 	return hs; //return HAL status
@@ -95,15 +95,15 @@ void DMX_IRQHandler(void)
 	/* If break detected */
 	if(((isrflags & USART_SR_LBD) != RESET) && ((cr2its & USART_CR2_LBDIE) != RESET))
 	{
-		/* Update global array and counter if the previous state was
-		 * DMX_MODE_DATA, i.e. if we was receiving.
-		 */
-		if(DMX_Mode == DMX_MODE_DATA)
-		{
-			//Update global variables seen from outside
-			memcpy(DMX_rxData,rxBuff,rxCounter);
-			DMX_rxData_count = rxCounter;
-		}
+//		/* Update global array and counter if the previous state was
+//		 * DMX_MODE_DATA, i.e. if we was receiving.
+//		 */
+//		if(DMX_Mode == DMX_MODE_DATA)
+//		{
+//			//Update global variables seen from outside
+//			memcpy(DMX_rxData,rxBuff,rxCounter);
+//			DMX_rxData_count = rxCounter;
+//		}
 		CLEAR_BIT(DMX_huart_ptr->Instance->SR, USART_SR_LBD); //reset LBD flag
 		rxCounter = 0; //reset data counter
 		DMX_ResetTimer();
@@ -129,7 +129,8 @@ void DMX_IRQHandler(void)
 		if(rxByte == 0) // SC == 0?
 		{
 			DMX_Mode = DMX_MODE_DATA;
-			rxBuff[0] = 0;
+			//rxBuff[0] = 0;
+			DMX_rxData[0] = 0;
 		}
 		else
 		{
@@ -140,7 +141,8 @@ void DMX_IRQHandler(void)
 		break;
 	case DMX_MODE_DATA:
 		rxCounter++;
-		rxBuff[rxCounter] = rxByte;
+		//rxBuff[rxCounter] = rxByte;
+		DMX_rxData[rxCounter] = rxByte;
 		break;
 	default:
 		break;

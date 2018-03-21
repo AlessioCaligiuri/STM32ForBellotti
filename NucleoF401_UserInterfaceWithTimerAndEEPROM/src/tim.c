@@ -158,7 +158,7 @@ void MX_TIM10_Init(void)
   htim10.Instance = TIM10;
   htim10.Init.Prescaler = 8399;
   htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim10.Init.Period = 199;//99 for 100Hz or 10ms
+  htim10.Init.Period = 199;//99 for 100Hz or 10ms, 199 for 50Hz or 20ms, 999 for 10Hz or 100ms
   htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
   {
