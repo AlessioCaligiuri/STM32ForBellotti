@@ -7,13 +7,13 @@
 /**
   ******************************************************************************
   * @file    myMenu.c
-  * @author  Alessio Caligiuri
-  * @version V0.0.1
+  * @author  Alessio Caligiuri, Emanuele Anfuso
+  * @version V0.9
   * @date    10 September 2017
   * @brief   Creation of menu entries.
   ******************************************************************************
-  * @details
-  *
+  *	Here, there are all menu entries, filled with desired names, values,
+  *	pointers to other entries and function pointers.
   ******************************************************************************
   */
 
@@ -65,7 +65,7 @@ MenuEntryStruct mesL2_mem_back;
 /* END Entries structs ----------------------------------------------------- */
 
 /**
- * @brief	Create menu entries and fill them fields.
+ * @brief	Creates menu entries and fill them fields.
  */
 void MyMenu_CreateEntries(void)
 {

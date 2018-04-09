@@ -1,3 +1,13 @@
+/**
+  ******************************************************************************
+  * @file    EEPROM.h
+  * @author  Alessio Caligiuri, Emanuele Anfuso
+  * @version V0.9
+  * @date    26 March 2018
+  * @brief	 Functions to handle the EEPROM.
+  ******************************************************************************
+  */
+
 #ifndef __EEPROM_H
 #define __EEPROM_H
 
@@ -15,7 +25,8 @@
 
 #define	EEPROM_TIMEOUT_MS	10 //ms to wait in IsDeviceReady
 #define	EEPROM_TRIALS		60 //trials to do in IsDeviceReady
-/* Attention! HAL_I2C_IsDeviceReady polls the slave device to be ready by
+/** @attention
+ * HAL_I2C_IsDeviceReady polls the slave device to be ready by
  * sending the address and sampling the "ACK" bit. This is done continually
  * and the timeout refers to the availability of the MCU's I2C peripheral.
  * So, in general, the timeout is not the delay between two subsequent trials!

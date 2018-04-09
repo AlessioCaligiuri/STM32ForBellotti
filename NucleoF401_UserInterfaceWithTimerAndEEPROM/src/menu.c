@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
   * @file    menu.c
-  * @author  Alessio Caligiuri
-  * @version V0.0.1
+  * @author  Alessio Caligiuri, Emanuele Anfuso
+  * @version V0.9
   * @date    22 June 2017
   * @brief   This code is used to build a menu, composed by menu entries.
   * 		 This code is intended for use with a rotary encoder with button
@@ -10,11 +10,6 @@
   * 		 Each menu entry can perform a specific task when the button is
   * 		 pressed. This task is specified by the field "onPressed", that is
   * 		 a function pointer.
-  ******************************************************************************
-  * @attention
-  *
-
-  *
   ******************************************************************************
   */
 
@@ -46,8 +41,8 @@ uint16_t dmxCheckOnLCD_Ch_1stColumn = 1;
 
 /**
  * @brief	Menu initialization.
- * 			Set the first menu entry and the menu state as "navigation".
- * 			Initialize the LCD display.
+ * 			Sets the first menu entry and the menu state as "navigation".
+ * 			Initializes the LCD display.
  * @param	initialMenuEntry	Pointer to the initial menu entry.
  */
 void Menu_Init(MenuEntryStruct *initialMenuEntry)
@@ -59,7 +54,7 @@ void Menu_Init(MenuEntryStruct *initialMenuEntry)
 }
 
 /**
- * @brief	Fill all entry fields with 0.
+ * @brief	Fills all entry fields with 0.
  */
 void Menu_FillEntryWithZeros(MenuEntryStruct *menuEntryStruct)
 {
@@ -75,7 +70,7 @@ void Menu_FillEntryWithZeros(MenuEntryStruct *menuEntryStruct)
 }
 
 /**
- * @brief	Go to lower level menu entry.
+ * @brief	Goes to lower level menu entry.
  */
 void Menu_GoLowerLevel(void)
 {
@@ -83,7 +78,7 @@ void Menu_GoLowerLevel(void)
 }
 
 /**
- * @brief	Go to upper level menu entry.
+ * @brief	Goes to upper level menu entry.
  */
 void Menu_GoUpperLevel(void)
 {
@@ -91,7 +86,7 @@ void Menu_GoUpperLevel(void)
 }
 
 /**
- * @brief 	Go to previous menu entry in this level.
+ * @brief 	Goes to previous menu entry in this level.
  */
 void Menu_GoPreviousEntry(void)
 {
@@ -99,7 +94,7 @@ void Menu_GoPreviousEntry(void)
 }
 
 /**
- * @brief	Go to next menu entry in this level.
+ * @brief	Goes to next menu entry in this level.
  */
 void Menu_GoNextEntry(void)
 {
@@ -107,11 +102,12 @@ void Menu_GoNextEntry(void)
 }
 
 /**
- * @brief	To call when the button is pressed.
- * 			In "Navigation" mode, perform the menu entry task.
- * 			In "Modify Parameter" mode, save the new value and set
- * 			"isModified" flag for this entry and the entire menu, then set
+ * @brief	Performs an action related to the encoder pression.
+ * 			In "Navigation" mode, executes the menu entry task.
+ * 			In "Modify Parameter" mode, saves the new value and sets
+ * 			"isModified" flag for this entry and the entire menu, then sets
  * 			the menu mode as "Navigation".
+ * @note 	To be called when the button is pressed.
  */
 void Menu_OnPression(void)
 {
@@ -198,7 +194,7 @@ void Menu_OnPression(void)
 /**
  * @brief	Used as "onPression" when the menu entry can modify a parameter
  * 			with 1 - 512 bounds.
- * 			Set the menu mode as "Parameter Modify", then load the current
+ * 			Sets the menu mode as "Parameter Modify", then loads the current
  * 			parameter value into a temporary variable.
  */
 void Menu_ModifyParam_1_512(void)
@@ -213,7 +209,7 @@ void Menu_ModifyParam_1_512(void)
 /**
  * @brief	Used as "onPression" when the menu entry can modify a parameter
  * 			with 0 - 255 bounds (uint8_t).
- * 			Set the menu mode as "Parameter Modify", then load the current
+ * 			Sets the menu mode as "Parameter Modify", then loads the current
  * 			parameter value into a temporary variable.
  */
 void Menu_ModifyParam_0_255(void)
@@ -228,7 +224,7 @@ void Menu_ModifyParam_0_255(void)
 /**
  * @brief	Used as "onPression" when the menu entry can modify a parameter
  * 			with boolean value.
- * 			Set the menu mode as "Parameter Modify", then load the current
+ * 			Sets the menu mode as "Parameter Modify", then loads the current
  * 			parameter value into a temporary variable.
  */
 void Menu_ModifyParam_0_1(void)
@@ -243,7 +239,7 @@ void Menu_ModifyParam_0_1(void)
 /**
  * @brief	Used as "onPression" when the menu entry can modify the parameter
  * 			Light mode.
- * 			Set the menu mode as "Parameter Modify", then load the current
+ * 			Sets the menu mode as "Parameter Modify", then loads the current
  * 			parameter value into a temporary variable.
  */
 void Menu_ModifyParam_LightMode(void)
@@ -256,8 +252,8 @@ void Menu_ModifyParam_LightMode(void)
 }
 
 /**
- * @brief	Show the current menu entry.
- * 			Clear the display and print name and, if necessary, parameter.
+ * @brief	Shows the current menu entry.
+ * 			Clears the display and print name and, if necessary, parameter.
  * 			If the parameter has been modified, shows an '*' after the name.
  */
 void Menu_Show(void)
@@ -523,7 +519,7 @@ void Menu_Show(void)
 }
 
 /**
- * @brief	Update menu on clockwise rotation.
+ * @brief	Updates menu on clockwise rotation.
  */
 void Menu_OnRotationCW(void)
 {
@@ -681,7 +677,7 @@ void Menu_OnRotationCW(void)
 }
 
 /**
- * @brief	Update menu on counter-clockwise rotation.
+ * @brief	Updates menu on counter-clockwise rotation.
  */
 void Menu_OnRotationCCW(void)
 {
@@ -832,17 +828,20 @@ void Menu_OnRotationCCW(void)
 	prevSystick = currSystick; //update previous value with current
 }
 
+/**
+ * @brief	Changes the menu state in "DMX Check on LCD".
+ */
 void Menu_DMXCheckOnLCD()
 {
 	menuState = DMXCheckOnLCD_Entered;
 }
 
 /**
- * @brief	Switch the current menu entry.
+ * @brief	Switches the current menu entry.
  *
- * 			Check if the passed pointer is not 0 and if the new entry is
- * 			different from the current; if yes, update the current entry
- * 			pointer with the new entry pointer and update the menu state
+ * 			Checks if the passed pointer is not 0 and if the new entry is
+ * 			different from the current; if yes, updates the current entry
+ * 			pointer with the new entry pointer and updates the menu state
  * 			as "Navigation Update".
  *
  * 	@param	Menu_newEntry	Pointer to the new entry.
@@ -859,6 +858,9 @@ void Menu_SwitchEntry(MenuEntryStruct* Menu_newEntry)
 	}
 }
 
+/**
+ * @brief	Changes the menu state to "Confirm Requested".
+ */
 void Menu_Confirm()
 {
 	menuState = ConfirmRequested;

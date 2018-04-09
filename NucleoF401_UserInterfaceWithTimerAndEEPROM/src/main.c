@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    main.c
   * @author  Alessio Caligiuri, Emanuele Anfuso
-  * @version V0.0.1
+  * @version V0.9
   * @date    26 March 2018
   * @brief   Main program body
   ******************************************************************************
@@ -26,14 +26,50 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+
+/**
+ * @brief	DMX receiving channel for red LED of A stripe.
+ */
 uint16_t dmxCh_redA = 1;
+
+/**
+ * @brief	DMX receiving channel for green LED of A stripe.
+ */
 uint16_t dmxCh_greenA = 2;
+
+/**
+ * @brief	DMX receiving channel for blue LED of A stripe.
+ */
 uint16_t dmxCh_blueA = 3;
+
+/**
+ * @brief	DMX receiving channel for red LED of B stripe.
+ */
 uint16_t dmxCh_redB = 4;
+
+/**
+ * @brief	DMX receiving channel for green LED of B stripe.
+ */
 uint16_t dmxCh_greenB = 5;
+
+/**
+ * @brief	DMX receiving channel for blue LED of B stripe.
+ */
 uint16_t dmxCh_blueB = 6;
+
+/**
+ * @brief	If != 0, all lights are full on (100% PWM)
+ */
 uint8_t fullOnIsActive = 0;
+
+/*
+ * @brief If != 0, the DMX Thru hardware is active.
+ */
 uint8_t dmxThruModeIsActive = 1;
+
+/**
+ * @brief	Light mode
+ */
 LightMode_t lightMode = LightMode_DMXControlled;
 
 /**
@@ -66,8 +102,15 @@ uint8_t light_greenB;
  */
 uint8_t light_blueB;
 
+/*
+ * @brief	If != 0, the DMX check via serial to PC is on.
+ */
 uint8_t dmxCheckViaSerial_isOn = 0;
 
+/*
+ * @brief	Counter used as a software timer for the DMX Timeout.
+ * @note	Incremented every time TIM10 expires.
+ */
 int timerCounterDMX = 0;
 
 /* USER CODE END PV */
@@ -84,7 +127,7 @@ void PWM_Update(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-int timFlag_PeriodElapsed = 0;
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -147,7 +190,8 @@ int main(void)
 
 }
 
-/** System Clock Configuration
+/**
+ * @brief	System Clock Configuration
 */
 void SystemClock_Config(void)
 {
@@ -361,7 +405,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 }
 
 /**
- * @brief	Resets DMX timeout timer.
+ * @brief	Resets DMX timeout software timer.
+ * @note	Called by DMX.c
  */
 void DMX_ResetTimer(void)
 {

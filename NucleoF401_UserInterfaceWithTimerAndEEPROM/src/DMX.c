@@ -42,7 +42,8 @@ int16_t DMX_rxData_count = -1;
 UART_HandleTypeDef *DMX_huart_ptr;
 
 /**
- * @brief	DMX initialization function
+ * @brief	DMX initialization function.
+ * 			Initializes the UART in "LIN mode" and enables interrupts.
  * @param  	huart: 	pointer to a UART_HandleTypeDef structure that contains
  *                	the configuration information for the specified UART module.
  * @retval 	HAL status
@@ -67,12 +68,13 @@ HAL_StatusTypeDef DMX_Init(UART_HandleTypeDef *huart)
 
 /**
  * @brief	Interrupt Service Routine for DMX.
- * 			To call in USARTx_IRQHandler().
+ * @note	To be called in USARTx_IRQHandler().
  */
 void DMX_IRQHandler(void)
 {
 	/* Received byte (buffer) and temporary variable to clean error flags */
-	uint8_t rxByte, temp = 0;
+	uint8_t rxByte = 0;
+	uint8_t temp = 0;
 
 	/* Get registers from the UART peripheral */
 	uint32_t isrflags   = READ_REG(DMX_huart_ptr->Instance->SR);

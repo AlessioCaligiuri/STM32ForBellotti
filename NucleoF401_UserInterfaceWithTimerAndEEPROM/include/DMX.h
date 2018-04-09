@@ -26,12 +26,6 @@ extern int16_t DMX_rxData_count;
  */
 extern void DMX_ResetTimer(void);
 
-/**
- * @brief	DMX initialization function
- * @param  	huart: 	pointer to a UART_HandleTypeDef structure that contains
- *                	the configuration information for the specified UART module.
- * @retval 	HAL status
- */
 HAL_StatusTypeDef DMX_Init(UART_HandleTypeDef *huart);
 void DMX_IRQHandler(void);
 

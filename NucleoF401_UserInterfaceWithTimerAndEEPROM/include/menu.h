@@ -1,3 +1,18 @@
+/**
+  ******************************************************************************
+  * @file    menu.h
+  * @author  Alessio Caligiuri, Emanuele Anfuso
+  * @version V0.9
+  * @date    22 June 2017
+  * @brief   This code is used to build a menu, composed by menu entries.
+  * 		 This code is intended for use with a rotary encoder with button
+  * 		 and a HD44780 LCD display.
+  * 		 Each menu entry can perform a specific task when the button is
+  * 		 pressed. This task is specified by the field "onPressed", that is
+  * 		 a function pointer.
+  ******************************************************************************
+  */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MENU_H
 #define __MENU_H

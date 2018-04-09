@@ -52,10 +52,12 @@
 //#define SWO_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-extern int timFlag_PeriodElapsed;
-void DelayBreaked(void);
+
 /* USER CODE END Private defines */
 
+/**
+ * @brief	Type definition for Light Mode.
+ */
 typedef enum {
 	LightMode_DMXControlled = 0,	/*!< Used when lights are DMX controlled. 			*/
 	LightMode_Manual = 1			/*!< Used when lights are driven by manual settings.*/
@@ -67,39 +69,12 @@ typedef enum {
  */
 extern uint8_t fullOnIsActive;
 
-/**
- * @brief	DMX receiving channel for red LED of A stripe.
- */
 extern uint16_t dmxCh_redA;
-
-/**
- * @brief	DMX receiving channel for green LED of A stripe.
- */
 extern uint16_t dmxCh_greenA;
-
-/**
- * @brief	DMX receiving channel for blue LED of A stripe.
- */
 extern uint16_t dmxCh_blueA;
-
-/**
- * @brief	DMX receiving channel for red LED of B stripe.
- */
 extern uint16_t dmxCh_redB;
-
-/**
- * @brief	DMX receiving channel for green LED of B stripe.
- */
 extern uint16_t dmxCh_greenB;
-
-/**
- * @brief	DMX receiving channel for blue LED of B stripe.
- */
 extern uint16_t dmxCh_blueB;
-
-/**
- * @brief	Light mode
- */
 extern LightMode_t lightMode;
 
 extern uint8_t dmxThruModeIsActive;

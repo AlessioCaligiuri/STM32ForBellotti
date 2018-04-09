@@ -1,12 +1,12 @@
 /**
   ******************************************************************************
   * @file    userInterface.c
-  * @author  Alessio Caligiuri
-  * @version V0.0.1
+  * @author  Alessio Caligiuri, Emanuele Anfuso
+  * @version V0.9
   * @date    10 September 2017
   * @brief   User interface with HD44780 LCD and rotary encoder + push button.
   ******************************************************************************
-  * @details
+  * @note
   *	This code is used to manage a user interface made by an HD44780 LCD (2x16)
   *	and a rotary encoder with push button.
   *	This user interface needs a menu library and a mymenu configuration file to
@@ -114,8 +114,8 @@ void UI_Init(void)
 }
 
 /**
- * @brief	Update and show menu, looking at encoder flags.
- * 			To call in an infinite loop in main.
+ * @brief	Updates and shows menu, looking at encoder flags.
+ * 			To be called in an infinite loop in main.
  */
 void UI_Update(void)
 {
@@ -156,8 +156,8 @@ void UI_Update(void)
 
 
 /**
- * @brief	Show a message on LCD, waiting for delay time or
- * 			encoder press/rotation. Then show menu.
+ * @brief	Shows a message on LCD.
+ * 			Waits for delay time or encoder pression/rotation, then shows menu.
  * @param	message	Message to write.
  * @param	delay	Delay in ms, to wait before showing menu.
  */
@@ -169,8 +169,8 @@ void UI_Message(char* message, uint32_t delay)
 }
 
 /**
- * @brief	Show an error message on LCD and turn on orange light, waiting for
- * 			encoder press/rotation. Then show menu.
+ * @brief	Show an error message on LCD and turn on orange light.
+ * 			Waits for encoder press/rotations, then shows menu.
  * @param	message	Message to write.
  * @param	delay	Delay in ms, to wait before showing menu.
  */
