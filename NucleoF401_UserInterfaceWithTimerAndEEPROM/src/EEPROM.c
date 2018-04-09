@@ -1,3 +1,12 @@
+/**
+  ******************************************************************************
+  * @file    EEPROM.c
+  * @author  Alessio Caligiuri, Emanuele Anfuso
+  * @version V0.0.1
+  * @date    26 March 2018
+  * @brief
+  ******************************************************************************
+  */
 #include "EEPROM.h"
 #include "HD44780.h"
 #include "stm32f4xx_hal.h"

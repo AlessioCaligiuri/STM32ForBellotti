@@ -1,5 +1,16 @@
 /**
   ******************************************************************************
+  * @file    I2C.c
+  * @author  Alessio Caligiuri, Emanuele Anfuso
+  * @version V0.0.1
+  * @date    26 March 2018
+  * @brief   This file provides code for the configuration
+  *          of the I2C instances.
+  ******************************************************************************
+  */
+
+/**
+  ******************************************************************************
   * File Name          : I2C.c
   * Description        : This file provides code for the configuration
   *                      of the I2C instances.
